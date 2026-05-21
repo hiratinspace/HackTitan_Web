@@ -35,7 +35,7 @@ HackTitan is IWU's premier student-run hackathon, a 24-hour sprint where builder
 
 ---
 
-## Prize Pool — $10,000 Total
+## Prize Pool — $8,000 Total
 
 ### Track Champions
 Each of the 4 tracks awards **$1,000** to the top team.
@@ -65,44 +65,6 @@ Projects are scored across four dimensions by a dedicated panel of industry judg
 
 ---
 
-## Schedule
-
-### Day 1 — March 20
-| Time | Event |
-|---|---|
-| 9:00 AM | Check-In & Badge Pickup |
-| 10:00 AM | Opening Ceremony + Keynotes |
-| 11:00 AM | **Hacking Begins — Clock Starts** |
-| 1:00 PM | Lunch + Company Sponsor Booths |
-| 3:00 PM | Workshop: Build with AI APIs (Anthropic & Google engineers) |
-| 5:00 PM | Mentor Office Hours — Round 1 |
-| 7:00 PM | Dinner |
-| 10:00 PM | Late-Night Snacks + Mentor Office Hours — Round 2 |
-| Midnight | Deep Work Hours |
-
-### Day 2 — March 21
-| Time | Event |
-|---|---|
-| 7:00 AM | Breakfast & Final Sprint |
-| 10:30 AM | 30-Minute Warning |
-| 11:00 AM | **Submissions Close** |
-| 11:30 AM | Track Demos (3 min + 2 min Q&A per team) |
-| 1:00 PM | Lunch & Judge Deliberation |
-| 2:30 PM | Grand Finals — Top Teams Present |
-| 4:00 PM | **Award Ceremony** |
-| 5:00 PM | Closing Celebration & Networking Mixer |
-
----
-
-## Mentors
-
-Industry veterans available for 1:1 office hours across all 4 tracks.
-
-| Name | Role | Company |
-|---|---|---|
-
----
-
 ## Organizing Team
 
 | Name | Major |
@@ -110,7 +72,7 @@ Industry veterans available for 1:1 office hours across all 4 tracks.
 | Hirat Rahman | CS & Neuroscience |
 | Ethan Godsey | Computer Science |
 | Yohance Williams | Computer Science |
-| Zhansen Shinggis | Computer Science |
+| Zhansen Shingis | Computer Science |
 
 **Advisors:** Dr. Mark Liffiton · Dr. Andrew Shallue (CS Department Chair), Patrick Zajac (Hart Career Center)
 
