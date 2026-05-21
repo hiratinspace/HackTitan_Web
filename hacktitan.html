@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HackTitan 2027 — Build the Future</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  /* ── RESET & VARIABLES ─────────────────────────────────── */
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --g0:#050D07; --g1:#0A1A0E; --g2:#0D2B14;
+    --green:#00C853; --green-l:#69F0AE; --green-d:#00401A;
+    --glow:rgba(0,200,83,.45); --glow2:rgba(105,240,174,.25);
+    --text:#E8F5E9; --muted:#6B9E7A; --border:rgba(0,200,83,.18);
+    --radius:14px; --card-bg:rgba(10,26,14,.75);
+  }
+  html { scroll-behavior:smooth; font-size:16px; }
+  body {
+    background:var(--g0); color:var(--text);
+    font-family:'Segoe UI',system-ui,sans-serif;
+    line-height:1.6; overflow-x:hidden;
+    cursor:none;
+  }
+  ::selection { background:var(--green); color:#000; }
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--g1); }
+  ::-webkit-scrollbar-thumb { background:var(--green-d); border-radius:3px; }
+
+  /* ── CUSTOM CURSOR ─────────────────────────────────────── */
+  #cursor {
+    position:fixed; width:14px; height:14px;
+    background:var(--green); border-radius:50%;
+    pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%);
+    transition:width .15s,height .15s,opacity .15s;
+  }
+  #cursor-ring {
+    position:fixed; width:40px; height:40px;
+    border:2px solid var(--green); border-radius:50%;
+    pointer-events:none; z-index:9998;
+    transform:translate(-50%,-50%);
+    transition:all .12s ease-out;
+    opacity:.5;
+  }
+  body:hover #cursor { opacity:1; }
+
+  /* ── PARTICLES CANVAS ──────────────────────────────────── */
+  #particles { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+  /* ── NAV ───────────────────────────────────────────────── */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding:1rem 2rem;
+    display:flex; align-items:center; justify-content:space-between;
+    backdrop-filter:blur(20px) saturate(1.4);
+    background:rgba(5,13,7,.7);
+    border-bottom:1px solid var(--border);
+    transition:padding .3s;
+  }
+  nav.scrolled { padding:.6rem 2rem; }
+  .nav-logo {
+    display:flex; align-items:center; gap:.6rem;
+    font-size:1.35rem; font-weight:800; letter-spacing:.04em;
+    color:var(--green); text-decoration:none;
+  }
+  .nav-logo .logo-icon {
+    width:36px; height:36px;
+    background:linear-gradient(135deg,var(--green),var(--green-l));
+    border-radius:8px; display:flex; align-items:center; justify-content:center;
+  }
+  .nav-links { display:flex; gap:2rem; list-style:none; }
+  .nav-links a {
+    color:var(--muted); text-decoration:none; font-size:.9rem;
+    font-weight:500; letter-spacing:.04em; transition:color .2s;
+    position:relative;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-4px; left:0; width:0; height:2px;
+    background:var(--green); border-radius:2px; transition:width .25s;
+  }
+  .nav-links a:hover { color:var(--green-l); }
+  .nav-links a:hover::after { width:100%; }
+  .nav-cta {
+    background:var(--green); color:#000; border:none;
+    padding:.55rem 1.4rem; border-radius:8px;
+    font-weight:700; font-size:.9rem; cursor:none;
+    transition:box-shadow .2s,transform .15s;
+    text-decoration:none; letter-spacing:.04em;
+  }
+  .nav-cta:hover { transform:translateY(-1px); }
+  .burger { display:none; flex-direction:column; gap:5px; cursor:none; }
+  .burger span { width:26px; height:2px; background:var(--green); border-radius:2px; transition:.3s; }
+
+  /* ── HERO ──────────────────────────────────────────────── */
+  #hero {
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; text-align:center;
+    padding:7rem 2rem 4rem; position:relative; z-index:1;
+  }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:.45rem;
+    border:1px solid var(--border); border-radius:999px;
+    padding:.35rem 1rem; margin-bottom:2rem;
+    font-size:.8rem; font-weight:600; letter-spacing:.1em;
+    color:var(--green-l); background:rgba(0,200,83,.07);
+    animation:fadeDown .8s ease both;
+  }
+  .hero-badge .badge-dot {
+    width:7px; height:7px; background:var(--green); border-radius:50%;
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100%{opacity:1;}
+    50%{opacity:.4;}
+  }
+
+  /* GLITCH */
+  .glitch {
+    font-size:clamp(3.5rem,10vw,7.5rem);
+    font-weight:900; letter-spacing:-.02em; line-height:1;
+    color:#fff; position:relative; animation:fadeDown .8s .1s ease both;
+  }
+  .glitch .green { color:var(--green); }
+  .glitch::before, .glitch::after {
+    content:attr(data-text); position:absolute; inset:0;
+    pointer-events:none;
+  }
+  .glitch::before {
+    animation:glitch1 3s infinite;
+    clip-path:polygon(0 0,100% 0,100% 40%,0 40%);
+    transform:translate(-3px,0);
+    color:var(--green-l); opacity:.8;
+  }
+  .glitch::after {
+    animation:glitch2 3s infinite;
+    clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);
+    transform:translate(3px,0);
+    color:var(--green); opacity:.7;
+  }
+  @keyframes glitch1 {
+    0%,94%,100%{transform:translate(-3px,0) skew(0);}
+    95%{transform:translate(-6px,-2px) skew(2deg);}
+    96%{transform:translate(4px,1px) skew(-1deg);}
+    97%{transform:translate(-3px,0);}
+  }
+  @keyframes glitch2 {
+    0%,94%,100%{transform:translate(3px,0) skew(0);}
+    95%{transform:translate(6px,2px) skew(-2deg);}
+    96%{transform:translate(-4px,-1px) skew(1deg);}
+    97%{transform:translate(3px,0);}
+  }
+
+  .hero-sub {
+    font-size:clamp(1rem,2.5vw,1.4rem);
+    color:var(--muted); margin:1.5rem 0 2.5rem;
+    max-width:620px; animation:fadeDown .8s .2s ease both;
+  }
+  .typewriter { border-right:2px solid var(--green); padding-right:3px; }
+
+  .hero-date {
+    display:flex; align-items:center; gap:.6rem; justify-content:center;
+    margin-bottom:2.5rem; color:var(--green-l);
+    font-size:.95rem; font-weight:600; letter-spacing:.06em;
+    animation:fadeDown .8s .3s ease both;
+  }
+  .hero-btns {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    animation:fadeDown .8s .4s ease both;
+  }
+  .btn-primary {
+    display:inline-flex; align-items:center; gap:.5rem;
+    background:linear-gradient(135deg,var(--green),#00A844);
+    color:#000; padding:.8rem 2rem; border-radius:10px;
+    font-weight:800; font-size:1rem; text-decoration:none;
+    border:none; cursor:none; transition:all .2s;
+    letter-spacing:.04em;
+  }
+  .btn-primary:hover { transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,0,0,.4); }
+  .btn-outline {
+    display:inline-flex; align-items:center; gap:.5rem;
+    border:2px solid var(--green); color:var(--green);
+    padding:.8rem 2rem; border-radius:10px;
+    font-weight:700; font-size:1rem; text-decoration:none;
+    cursor:none; transition:all .2s; background:transparent;
+    letter-spacing:.04em;
+  }
+  .btn-outline:hover { background:rgba(0,200,83,.12); transform:translateY(-3px); }
+
+  /* COUNTDOWN */
+  .countdown-wrap {
+    margin-top:4rem; animation:fadeDown .8s .5s ease both;
+  }
+  .countdown-label { font-size:.75rem; letter-spacing:.15em; color:var(--muted); margin-bottom:1rem; text-transform:uppercase; }
+  .countdown {
+    display:flex; gap:1.2rem; justify-content:center; flex-wrap:wrap;
+  }
+  .cd-unit {
+    display:flex; flex-direction:column; align-items:center;
+    min-width:80px;
+  }
+  .cd-num {
+    font-size:3rem; font-weight:900; line-height:1;
+    background:linear-gradient(180deg,#fff 0%,var(--green-l) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+    text-shadow:none; position:relative;
+  }
+  .cd-box {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:12px; padding:.8rem 1.2rem;
+    position:relative; overflow:hidden;
+    backdrop-filter:blur(10px);
+  }
+  .cd-box::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg,rgba(0,200,83,.06),transparent);
+  }
+  .cd-lbl { font-size:.65rem; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; margin-top:.4rem; }
+  .cd-sep { font-size:2.5rem; font-weight:900; color:var(--green); align-self:center; margin-bottom:1.2rem; animation:blink 1s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+  /* SCROLL INDICATOR */
+  .scroll-down {
+    display:flex; flex-direction:column; align-items:center; gap:.5rem;
+    color:var(--muted); font-size:.7rem; letter-spacing:.1em;
+    margin-top:1.75rem;
+    animation:fadeDown .8s .8s ease both;
+  }
+  .scroll-arrow { animation:bounce 2s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
+
+  /* ── SECTIONS BASE ─────────────────────────────────────── */
+  section { position:relative; z-index:1; padding:6rem 2rem; }
+  .container { max-width:1160px; margin:0 auto; }
+  .section-tag {
+    display:inline-flex; align-items:center; gap:.5rem;
+    background:rgba(0,200,83,.1); border:1px solid var(--border);
+    border-radius:999px; padding:.3rem .9rem;
+    font-size:.75rem; letter-spacing:.12em; color:var(--green);
+    text-transform:uppercase; margin-bottom:1rem;
+  }
+  .section-title {
+    font-size:clamp(2rem,4vw,3.2rem); font-weight:900;
+    line-height:1.1; margin-bottom:1rem;
+  }
+  .section-title span { color:var(--green); }
+  .section-desc { color:var(--muted); max-width:580px; font-size:1.05rem; }
+
+  /* REVEAL ANIMATION */
+  .reveal {
+    opacity:0; transform:translateY(32px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .reveal-left { opacity:0; transform:translateX(-32px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal-left.visible { opacity:1; transform:translateX(0); }
+  .reveal-right { opacity:0; transform:translateX(32px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal-right.visible { opacity:1; transform:translateX(0); }
+
+  /* ── STATS ─────────────────────────────────────────────── */
+  #about { background:linear-gradient(180deg,var(--g0) 0%,var(--g1) 100%); }
+  .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; }
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:2.5rem; }
+  .stat-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:var(--radius); padding:1.5rem;
+    backdrop-filter:blur(10px);
+    transition:border-color .25s, transform .25s;
+    position:relative; overflow:hidden;
+  }
+  .stat-card::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,rgba(0,200,83,.05),transparent);
+    opacity:0; transition:opacity .3s;
+  }
+  .stat-card:hover { border-color:var(--green); transform:translateY(-4px); }
+  .stat-card:hover::before { opacity:1; }
+  .stat-num {
+    font-size:2.4rem; font-weight:900; color:var(--green);
+    line-height:1;
+  }
+  .stat-lbl { color:var(--muted); font-size:.85rem; margin-top:.25rem; }
+  .features-list { margin-top:2rem; display:flex; flex-direction:column; gap:1rem; }
+  .feature-item {
+    display:flex; align-items:flex-start; gap:1rem;
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:12px; padding:1rem 1.2rem;
+    transition:border-color .25s;
+  }
+  .feature-item:hover { border-color:var(--green); }
+  .fi-icon {
+    width:38px; height:38px; flex-shrink:0;
+    background:rgba(0,200,83,.12); border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--green);
+  }
+  .fi-text strong { display:block; font-weight:700; font-size:.95rem; }
+  .fi-text span { color:var(--muted); font-size:.85rem; }
+
+  /* ── TRACKS ────────────────────────────────────────────── */
+  #tracks { background:var(--g1); }
+  .tracks-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,320px)); gap:1.5rem; margin-top:3rem; justify-content:center; }
+  .track-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:var(--radius); padding:2rem 1.5rem;
+    cursor:none; transition:all .3s; position:relative; overflow:hidden;
+    backdrop-filter:blur(10px);
+  }
+  .track-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--green),var(--green-l));
+    transform:scaleX(0); transition:transform .3s; transform-origin:left;
+  }
+  .track-card:hover { border-color:var(--green); transform:translateY(-6px); box-shadow:0 20px 50px rgba(0,0,0,.5); }
+  .track-card:hover::before { transform:scaleX(1); }
+  .track-icon {
+    width:52px; height:52px;
+    background:linear-gradient(135deg,rgba(0,200,83,.15),rgba(105,240,174,.08));
+    border:1px solid var(--border); border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--green); margin-bottom:1.2rem;
+    transition:box-shadow .3s;
+  }
+  .track-card:hover .track-icon { background:rgba(0,200,83,.22); }
+  .track-card h3 { font-size:1.1rem; font-weight:800; margin-bottom:.5rem; }
+  .track-card p { color:var(--muted); font-size:.875rem; line-height:1.55; }
+  .track-tag {
+    display:inline-block; margin-top:1rem;
+    background:rgba(0,200,83,.1); border:1px solid rgba(0,200,83,.2);
+    border-radius:999px; padding:.2rem .7rem;
+    font-size:.7rem; color:var(--green-l); letter-spacing:.06em;
+  }
+
+  /* ── PRIZES ────────────────────────────────────────────── */
+  #prizes { background:linear-gradient(180deg,var(--g1) 0%,var(--g0) 100%); }
+  .prizes-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem; }
+  .prize-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:var(--radius); padding:2.5rem 2rem; text-align:center;
+    transition:all .3s; position:relative; overflow:hidden;
+    backdrop-filter:blur(10px);
+    transform-style:preserve-3d; will-change:transform;
+  }
+  .prize-card.featured {
+    border-color:var(--green);
+    box-shadow:0 8px 32px rgba(0,0,0,.4);
+    transform:scale(1.04);
+  }
+  .prize-rank {
+    font-size:.7rem; letter-spacing:.2em; color:var(--muted);
+    text-transform:uppercase; margin-bottom:.5rem;
+  }
+  .prize-medal {
+    font-size:3rem; margin-bottom:.75rem;
+  }
+  .prize-amount {
+    font-size:2.8rem; font-weight:900;
+    background:linear-gradient(135deg,var(--green),var(--green-l));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text; line-height:1;
+  }
+  .prize-title { font-size:1.15rem; font-weight:700; margin:.5rem 0 .75rem; }
+  .prize-perks { list-style:none; text-align:left; }
+  .prize-perks li {
+    display:flex; align-items:center; gap:.5rem;
+    color:var(--muted); font-size:.85rem; padding:.35rem 0;
+    border-bottom:1px solid var(--border);
+  }
+  .prize-perks li:last-child { border:none; }
+  .prize-perks li svg { color:var(--green); flex-shrink:0; }
+  .special-prizes { margin-top:3rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,300px)); gap:1rem; justify-content:center; }
+  .special-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:12px; padding:1.25rem; display:flex; align-items:center; gap:1rem;
+    transition:all .25s;
+  }
+  .special-card:hover { border-color:var(--green); transform:translateY(-3px); }
+  .special-icon { color:var(--green); flex-shrink:0; }
+  .special-card strong { display:block; font-size:.9rem; }
+  .special-card span { color:var(--muted); font-size:.8rem; }
+
+  /* ── COMPANY CHALLENGES ────────────────────────────────── */
+  #challenges { background:var(--g0); }
+  .challenges-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,340px));
+    gap:1.5rem; margin-top:3rem; justify-content:center;
+  }
+  .challenge-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:var(--radius); padding:1.75rem;
+    transition:all .3s; cursor:none; position:relative; overflow:hidden;
+    backdrop-filter:blur(10px);
+  }
+  .challenge-card::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,rgba(0,200,83,.04),transparent);
+    opacity:0; transition:opacity .3s;
+  }
+  .challenge-card:hover { border-color:var(--green); transform:translateY(-5px); box-shadow:0 20px 40px rgba(0,0,0,.5); }
+  .challenge-card:hover::before { opacity:1; }
+  .challenge-header { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
+  .company-badge {
+    width:46px; height:46px; border-radius:10px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.72rem; font-weight:900; letter-spacing:.03em;
+    border:1px solid var(--border);
+  }
+  .challenge-company { font-size:.75rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
+  .challenge-card h3 { font-size:1rem; font-weight:800; margin-bottom:.45rem; }
+  .challenge-card p { color:var(--muted); font-size:.855rem; line-height:1.6; }
+  .challenge-prize {
+    margin-top:1.1rem; display:inline-flex; align-items:center; gap:.4rem;
+    background:rgba(0,200,83,.09); border:1px solid rgba(0,200,83,.2);
+    border-radius:999px; padding:.25rem .85rem;
+    font-size:.76rem; color:var(--green-l); font-weight:700;
+  }
+
+  /* ── TRACK WINNERS ──────────────────────────────────────── */
+  .grand-prize-wrap { max-width:420px; margin:3rem auto 2.5rem; }
+  .track-winners-label {
+    text-align:center; font-size:.75rem; letter-spacing:.15em;
+    color:var(--muted); text-transform:uppercase; margin-bottom:1.25rem;
+    display:flex; align-items:center; gap:.75rem;
+  }
+  .track-winners-label::before, .track-winners-label::after {
+    content:''; flex:1; height:1px; background:var(--border);
+  }
+  .track-winners-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,240px)); gap:1.2rem; margin-bottom:2.5rem; justify-content:center;
+  }
+  .track-winner-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:var(--radius); padding:1.4rem 1rem; text-align:center;
+    transition:all .3s; cursor:none; backdrop-filter:blur(10px);
+  }
+  .track-winner-card:hover { border-color:var(--green); transform:translateY(-4px); box-shadow:0 16px 36px rgba(0,0,0,.45); }
+  .tw-icon { color:var(--green); margin-bottom:.65rem; }
+  .tw-track { font-size:.68rem; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; margin-bottom:.3rem; }
+  .tw-amount { font-size:1.65rem; font-weight:900; color:var(--green); line-height:1; }
+  .tw-label { font-size:.8rem; font-weight:700; margin-top:.35rem; }
+  @media(max-width:768px) { .track-winners-grid { grid-template-columns:1fr 1fr; } }
+
+  /* ── TIMELINE ──────────────────────────────────────────── */
+  #schedule { background:var(--g0); }
+  .timeline-tabs {
+    display:flex; gap:1rem; margin:2.5rem 0 2rem;
+  }
+  .tab-btn {
+    padding:.6rem 1.5rem; border-radius:8px;
+    border:1px solid var(--border); background:transparent;
+    color:var(--muted); font-weight:600; cursor:none;
+    transition:all .25s; font-size:.9rem;
+  }
+  .tab-btn.active {
+    background:var(--green); color:#000;
+    border-color:var(--green);
+  }
+  .timeline { display:none; }
+  .timeline.active { display:block; }
+  .tl-item {
+    display:grid; grid-template-columns:100px 1fr;
+    gap:1.5rem; margin-bottom:1.2rem; align-items:start;
+  }
+  .tl-time {
+    text-align:right; color:var(--green); font-weight:700;
+    font-size:.85rem; padding-top:.8rem;
+    font-variant-numeric:tabular-nums;
+  }
+  .tl-body {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:12px; padding:1rem 1.25rem;
+    border-left:3px solid var(--green);
+    transition:border-color .25s,transform .25s;
+  }
+  .tl-body:hover { border-color:var(--green); transform:translateX(4px); }
+  .tl-body strong { display:flex; align-items:center; gap:.5rem; font-size:.95rem; color:var(--green-l); }
+  .tl-body p { color:var(--muted); font-size:.83rem; margin-top:.2rem; }
+
+  /* ── MENTORS ───────────────────────────────────────────── */
+  #mentors { background:linear-gradient(180deg,var(--g0) 0%,var(--g1) 100%); }
+  .mentors-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,260px)); gap:1.5rem; margin-top:3rem; justify-content:center; }
+  .mentor-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:var(--radius); padding:1.5rem; text-align:center;
+    transition:all .3s; cursor:none;
+  }
+  .mentor-card:hover { border-color:var(--green); transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,.5); }
+  .mentor-avatar {
+    width:70px; height:70px; border-radius:50%; margin:0 auto 1rem;
+    background:linear-gradient(135deg,var(--green-d),var(--green));
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.6rem; font-weight:900; color:#000;
+    position:relative; border:2px solid var(--green);
+  }
+  .mentor-card h4 { font-size:.95rem; font-weight:700; }
+  .mentor-card p { color:var(--green); font-size:.8rem; margin-top:.2rem; }
+  .mentor-card span { color:var(--muted); font-size:.75rem; }
+
+  /* ── FAQ ───────────────────────────────────────────────── */
+  #faq { background:var(--g1); }
+  .faq-list { margin-top:2.5rem; display:flex; flex-direction:column; gap:.75rem; max-width:760px; }
+  .faq-item {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:12px; overflow:hidden; transition:border-color .25s;
+  }
+  .faq-item.open { border-color:var(--green); }
+  .faq-q {
+    width:100%; background:none; border:none; color:var(--text);
+    padding:1.15rem 1.25rem; display:flex; align-items:center; justify-content:space-between;
+    cursor:none; font-size:.95rem; font-weight:600; text-align:left;
+    gap:1rem;
+  }
+  .faq-icon { color:var(--green); flex-shrink:0; transition:transform .3s; }
+  .faq-item.open .faq-icon { transform:rotate(180deg); }
+  .faq-a {
+    max-height:0; overflow:hidden; transition:max-height .35s ease, padding .35s;
+    color:var(--muted); font-size:.88rem; line-height:1.65;
+  }
+  .faq-item.open .faq-a { max-height:300px; }
+  .faq-a-inner { padding:0 1.25rem 1.15rem; }
+
+  /* ── REGISTER ──────────────────────────────────────────── */
+  #register { background:var(--g0); }
+  .register-inner {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:20px; padding:3.5rem; max-width:680px; margin:0 auto;
+    backdrop-filter:blur(20px); position:relative; overflow:hidden;
+  }
+  .register-inner::before {
+    content:''; position:absolute; top:-100px; right:-100px;
+    width:300px; height:300px;
+    background:radial-gradient(circle,rgba(0,200,83,.12),transparent 70%);
+    pointer-events:none;
+  }
+  .register-inner::after {
+    content:''; position:absolute; bottom:-80px; left:-80px;
+    width:250px; height:250px;
+    background:radial-gradient(circle,rgba(105,240,174,.08),transparent 70%);
+    pointer-events:none;
+  }
+  .register-inner h2 { font-size:2rem; font-weight:900; margin-bottom:.5rem; }
+  .register-inner p { color:var(--muted); margin-bottom:2rem; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .form-group { display:flex; flex-direction:column; gap:.4rem; }
+  .form-group.full { grid-column:1/-1; }
+  label { font-size:.8rem; font-weight:600; color:var(--green-l); letter-spacing:.05em; }
+  input, select, textarea {
+    background:rgba(0,0,0,.4); border:1px solid var(--border);
+    border-radius:8px; padding:.7rem 1rem; color:var(--text);
+    font-size:.9rem; outline:none; transition:border-color .2s, box-shadow .2s;
+    font-family:inherit; cursor:none;
+  }
+  input::placeholder, textarea::placeholder { color:var(--muted); }
+  input:focus, select:focus, textarea:focus {
+    border-color:var(--green); box-shadow:0 0 0 3px rgba(0,200,83,.15);
+  }
+  select option { background:var(--g1); }
+  textarea { resize:none; min-height:80px; }
+  .form-submit {
+    margin-top:1.5rem; width:100%;
+    padding:1rem; border-radius:10px; border:none;
+    background:linear-gradient(135deg,var(--green),#00A844);
+    color:#000; font-weight:800; font-size:1.05rem;
+    cursor:none; transition:all .25s; letter-spacing:.06em;
+    display:flex; align-items:center; justify-content:center; gap:.5rem;
+  }
+  .form-submit:hover { box-shadow:0 8px 25px rgba(0,0,0,.4); transform:translateY(-2px); }
+
+  /* CONFETTI */
+  .confetti-piece {
+    position:fixed; width:10px; height:10px;
+    pointer-events:none; z-index:9999; border-radius:2px;
+    animation:confetti-fall 2s ease-out forwards;
+  }
+  @keyframes confetti-fall {
+    0%{opacity:1;transform:translate(0,0) rotate(0deg);}
+    100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(720deg);}
+  }
+
+  /* ── FOOTER ────────────────────────────────────────────── */
+  footer {
+    background:var(--g1); border-top:1px solid var(--border);
+    padding:3rem 2rem 1.5rem; position:relative; z-index:1;
+  }
+  .footer-grid {
+    max-width:1160px; margin:0 auto;
+    display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem;
+    padding-bottom:2.5rem; border-bottom:1px solid var(--border);
+    margin-bottom:1.5rem;
+  }
+  .footer-brand p { color:var(--muted); font-size:.875rem; margin:.75rem 0 1.25rem; max-width:280px; }
+  .social-row { display:flex; gap:.75rem; }
+  .social-btn {
+    width:38px; height:38px; border-radius:8px;
+    border:1px solid var(--border); background:transparent;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted); cursor:none; transition:all .2s;
+    text-decoration:none;
+  }
+  .social-btn:hover { border-color:var(--green); color:var(--green); }
+  .footer-col h4 { font-size:.85rem; font-weight:700; letter-spacing:.08em; color:var(--green-l); margin-bottom:.9rem; text-transform:uppercase; }
+  .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:.55rem; }
+  .footer-col a { color:var(--muted); font-size:.875rem; text-decoration:none; transition:color .2s; }
+  .footer-col a:hover { color:var(--green-l); }
+  .footer-bottom { text-align:center; color:var(--muted); font-size:.8rem; }
+
+  /* mobile styles consolidated in responsive block below */
+
+  /* ── HERO LAPTOP (right, 45° angle) ────────────────────── */
+  .hero-laptop-wrap {
+    position:absolute; right:-40px; top:50%;
+    transform:translateY(-50%);
+    pointer-events:none; z-index:0; overflow:visible;
+  }
+  .hero-laptop {
+    width:min(520px,42vw);
+    transform-style:preserve-3d;
+    transform:perspective(900px) rotateY(-30deg) rotateX(10deg) rotateZ(-8deg);
+    transition:transform .15s ease;
+    pointer-events:auto; opacity:.5;
+  }
+
+  /* ── HERO CONTENT CENTER ────────────────────────────────── */
+  .hero-content {
+    position:relative; z-index:2;
+    display:flex; flex-direction:column; align-items:center;
+  }
+
+  /* ── HARDWARE ANIMATION (left decoration) ───────────────── */
+  .hero-hw-wrap {
+    position:absolute; left:-30px; top:50%;
+    transform:translateY(-50%);
+    pointer-events:none; z-index:0;
+    width:min(420px,36vw);
+    opacity:.5;
+  }
+  .hw-panel {
+    background:linear-gradient(155deg,#0f2116,#090f0b);
+    border-radius:18px;
+    border:1.5px solid rgba(0,200,83,.22);
+    padding:18px;
+    box-shadow:0 0 60px rgba(0,200,83,.07),inset 0 1px 0 rgba(255,255,255,.04);
+    transform:perspective(900px) rotateY(30deg) rotateX(10deg) rotateZ(8deg);
+    transform-style:preserve-3d;
+    transition:transform .15s ease;
+  }
+  .hw-header {
+    display:flex; align-items:center; gap:.4rem;
+    border-bottom:1px solid rgba(0,200,83,.1);
+    padding-bottom:9px; margin-bottom:12px;
+  }
+  .hw-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .hw-title {
+    color:rgba(105,240,174,.45); font-size:.63rem;
+    margin-left:.3rem; letter-spacing:.05em;
+    font-family:'SF Mono','Fira Code','Courier New',monospace;
+  }
+  .hw-board {
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:6px;
+  }
+  .hw-chip {
+    background:linear-gradient(135deg,#192c1e,#101a12);
+    border:1px solid rgba(0,200,83,.18);
+    border-radius:6px;
+    padding:7px 5px 6px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px; position:relative; min-height:46px;
+  }
+  .hw-chip.span2 { grid-column:span 2; }
+  .hw-chip-lbl {
+    font-size:.52rem; color:rgba(105,240,174,.7);
+    letter-spacing:.06em; font-family:'SF Mono','Fira Code',monospace; font-weight:700;
+  }
+  .hw-chip-sub { font-size:.43rem; color:rgba(105,240,174,.3); letter-spacing:.04em; }
+  .hw-led {
+    position:absolute; top:4px; right:5px;
+    width:5px; height:5px; border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 6px var(--green);
+    animation:hw-blink 2s ease-in-out infinite;
+  }
+  .hw-led.s { animation-duration:3.2s; animation-delay:.5s; }
+  .hw-led.f { animation-duration:.8s; }
+  .hw-led.off { background:rgba(0,200,83,.15); box-shadow:none; animation:none; }
+  @keyframes hw-blink { 0%,100%{opacity:1;} 50%{opacity:.15;} }
+  .hw-traces { margin-top:10px; display:flex; flex-direction:column; gap:5px; }
+  .hw-trace {
+    height:1px; position:relative; overflow:hidden;
+    background:rgba(0,200,83,.07); border-radius:1px;
+  }
+  .hw-trace::after {
+    content:''; position:absolute; top:0; height:100%;
+    width:40%; border-radius:1px;
+    background:linear-gradient(90deg,transparent,rgba(0,200,83,.6),transparent);
+    animation:trace-flow linear infinite;
+  }
+  .hw-trace:nth-child(1)::after { animation-duration:1.8s; }
+  .hw-trace:nth-child(2)::after { animation-duration:2.5s; animation-delay:.7s; }
+  .hw-trace:nth-child(3)::after { animation-duration:1.4s; animation-delay:1.2s; }
+  @keyframes trace-flow { from{left:-40%;} to{left:140%;} }
+  .hw-stats { margin-top:10px; display:flex; flex-direction:column; gap:5px; }
+  .hw-stat-row {
+    display:flex; align-items:center; gap:6px;
+    font-family:'SF Mono','Fira Code',monospace; font-size:.47rem;
+    color:rgba(105,240,174,.45);
+  }
+  .hw-stat-lbl { width:30px; flex-shrink:0; }
+  .hw-stat-bar {
+    flex:1; height:3px; background:rgba(0,200,83,.08);
+    border-radius:2px; overflow:hidden;
+  }
+  .hw-stat-fill {
+    height:100%; border-radius:2px;
+    background:linear-gradient(90deg,var(--green-d),var(--green));
+  }
+  .hw-stat-val { width:28px; text-align:right; flex-shrink:0; }
+  .about-hw-panel {
+    margin-top:2rem; opacity:.2; pointer-events:none;
+  }
+  .about-hw-panel .hw-panel {
+    transform:perspective(900px) rotateY(-8deg) rotateX(4deg) rotateZ(-2deg);
+    transition:transform .15s ease;
+    box-shadow:0 0 80px rgba(0,200,83,.1),inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .laptop-lid {
+    background:linear-gradient(160deg,#0f2116,#090f0b);
+    border-radius:18px 18px 0 0;
+    border:1.5px solid rgba(0,200,83,.22);
+    padding:10px 10px 7px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .laptop-cam-row {
+    display:flex; justify-content:center; margin-bottom:6px;
+  }
+  .laptop-cam-dot {
+    width:8px; height:8px; border-radius:50%;
+    background:#111a13; border:1px solid rgba(0,200,83,.25);
+  }
+  .laptop-screen-inner {
+    background:#030b04; border-radius:8px;
+    height:min(360px,36vw); overflow:hidden;
+    border:1px solid rgba(0,200,83,.14);
+    font-family:'SF Mono','Fira Code','Cascadia Code','Courier New',monospace;
+    font-size:clamp(.58rem,.85vw,.8rem);
+  }
+  .term-bar {
+    background:#0c1a0e; padding:.38rem .7rem;
+    display:flex; align-items:center; gap:.38rem;
+    border-bottom:1px solid rgba(0,200,83,.1);
+    position:sticky; top:0;
+  }
+  .t-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .t-title-txt {
+    color:rgba(105,240,174,.45); font-size:.68rem;
+    margin-left:.4rem; letter-spacing:.05em;
+  }
+  .term-body {
+    padding:.55rem .8rem; height:calc(100% - 30px);
+    overflow:hidden; display:flex; flex-direction:column;
+    gap:1px; position:relative;
+  }
+  .term-line {
+    line-height:1.55; white-space:pre-wrap; word-break:break-all;
+    animation:tl-in .08s ease both;
+  }
+  .term-line.cmd  { color:#69F0AE; }
+  .term-line.out  { color:rgba(180,220,195,.65); }
+  .term-line.suc  { color:#00C853; }
+  .term-line.err  { color:#ff6b6b; }
+  .term-line.prog { color:#a8d8b0; }
+  .term-cursor {
+    display:inline-block; width:7px; height:.9em;
+    background:#00C853; vertical-align:text-bottom;
+    margin-left:1px; animation:blink-c .75s step-end infinite;
+  }
+  @keyframes blink-c { 0%,100%{opacity:1;} 50%{opacity:0;} }
+  @keyframes tl-in   { from{opacity:0;} to{opacity:1;} }
+
+  /* hinge */
+  .laptop-hinge-bar {
+    height:5px;
+    background:linear-gradient(180deg,#0c1a0e,#080e09);
+    border-left:1.5px solid rgba(0,200,83,.15);
+    border-right:1.5px solid rgba(0,200,83,.15);
+  }
+  /* base */
+  .laptop-base {
+    background:linear-gradient(180deg,#0f2116,#080e09);
+    border-radius:0 0 14px 14px;
+    border:1.5px solid rgba(0,200,83,.18);
+    border-top:none; padding:9px 14px 11px;
+    box-shadow:0 12px 40px rgba(0,0,0,.75);
+  }
+  /* keyboard */
+  .laptop-kb { display:flex; flex-direction:column; gap:3px; margin-bottom:7px; }
+  .kb-row    { display:flex; gap:3px; }
+  .key {
+    height:17px; border-radius:3px; flex:1;
+    background:linear-gradient(180deg,#192c1e,#101a12);
+    border:1px solid rgba(0,200,83,.13);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.42rem; color:rgba(105,240,174,.35);
+    letter-spacing:.02em; font-family:inherit;
+    transition:background .08s, border-color .08s;
+    user-select:none;
+  }
+  .key.wide  { flex:1.7; }
+  .key.wider { flex:2.4; }
+  .key.space { flex:7; }
+  .key.active {
+    background:linear-gradient(180deg,#1e3d26,#163020);
+    border-color:rgba(0,200,83,.55);
+    color:rgba(105,240,174,.8);
+  }
+  .laptop-trackpad {
+    width:88px; height:44px; margin:0 auto;
+    background:linear-gradient(180deg,#122016,#0d180f);
+    border-radius:6px; border:1px solid rgba(0,200,83,.1);
+  }
+  /* ── KEYFRAMES ─────────────────────────────────────────── */
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-18px);}to{opacity:1;transform:translateY(0);} }
+
+  /* ── TOAST ─────────────────────────────────────────────── */
+  #toast {
+    position:fixed; bottom:2rem; right:2rem; z-index:999;
+    background:var(--card-bg); border:1px solid var(--green);
+    border-radius:12px; padding:1rem 1.5rem;
+    display:flex; align-items:center; gap:.75rem;
+    box-shadow:0 8px 24px rgba(0,0,0,.5); color:var(--text);
+    font-size:.9rem; font-weight:600;
+    transform:translateY(100px); opacity:0;
+    transition:all .4s cubic-bezier(.175,.885,.32,1.275);
+    pointer-events:none;
+  }
+  #toast.show { transform:translateY(0); opacity:1; }
+  #toast svg { color:var(--green); }
+
+  /* ── GLOW ORBS ─────────────────────────────────────────── */
+  .orb {
+    position:absolute; border-radius:50%; pointer-events:none; z-index:0;
+    filter:blur(80px); opacity:.25;
+  }
+  .orb1 { width:500px; height:500px; background:radial-gradient(var(--green),transparent); top:-150px; right:-100px; }
+  .orb2 { width:350px; height:350px; background:radial-gradient(var(--green-l),transparent); bottom:-100px; left:-80px; }
+
+  /* ── ORGANIZERS & ADVISORS ─────────────────────────────── */
+  #organizers { background:var(--g0); }
+  #advisors   { background:linear-gradient(180deg,var(--g1) 0%,var(--g0) 100%); }
+  .org-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(170px,210px));
+    gap:1.25rem; margin-top:3rem; justify-content:center;
+  }
+  .org-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:var(--radius); padding:1.5rem 1rem;
+    text-align:center; text-decoration:none; color:var(--text);
+    transition:all .3s; cursor:none; display:block;
+    backdrop-filter:blur(10px); position:relative; overflow:hidden;
+  }
+  .org-card::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,rgba(0,200,83,.06),transparent);
+    opacity:0; transition:opacity .3s;
+  }
+  .org-card:hover { border-color:var(--green); transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,.5); }
+  .org-card:hover::before { opacity:1; }
+  .org-avatar {
+    width:56px; height:56px; border-radius:50%;
+    margin:0 auto .9rem;
+    background:linear-gradient(135deg,var(--green-d),var(--green));
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem; font-weight:900; color:#000;
+    border:2px solid var(--green);
+    box-shadow:0 0 14px rgba(0,200,83,.2);
+  }
+  .org-card h4 { font-size:.9rem; font-weight:700; }
+  .org-major { color:var(--green); font-size:.76rem; margin-top:.2rem; }
+  .org-li {
+    color:var(--muted); font-size:.7rem; margin-top:.4rem;
+    display:flex; align-items:center; justify-content:center; gap:.3rem;
+    transition:color .2s;
+  }
+  .org-card:hover .org-li { color:var(--green-l); }
+  .advisors-label {
+    font-size:.75rem; letter-spacing:.1em; color:var(--muted);
+    text-transform:uppercase; margin:3rem 0 -1rem; text-align:center;
+  }
+
+  /* ── RESPONSIVE ─────────────────────────────────────────── */
+  @media(max-width:1200px) {
+    .hero-laptop { width:min(420px,36vw); }
+    .hero-hw-wrap { width:min(360px,30vw); }
+  }
+  @media(max-width:960px) {
+    .hero-laptop-wrap,.hero-hw-wrap { display:none; }
+  }
+  @media(max-width:768px) {
+    .nav-links,.nav-cta { display:none; }
+    .nav-links.open {
+      display:flex; flex-direction:column;
+      position:fixed; inset:0; top:60px;
+      background:rgba(5,13,7,.97); padding:2rem;
+      gap:2rem; z-index:99;
+    }
+    .nav-links.open .nav-cta-mobile {
+      display:inline-flex; align-items:center; gap:.5rem;
+      background:var(--green); color:#000; border-radius:8px;
+      padding:.65rem 1.4rem; font-weight:700; font-size:.95rem;
+      text-decoration:none; letter-spacing:.04em; width:fit-content;
+    }
+    .burger { display:flex; }
+    .burger span { transition:transform .3s, opacity .3s; }
+    .burger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+    .burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    .about-grid,.prizes-grid { grid-template-columns:1fr; }
+    .stats-grid { grid-template-columns:1fr 1fr; }
+    .form-grid { grid-template-columns:1fr; }
+    .footer-grid { grid-template-columns:1fr 1fr; gap:2rem; }
+    .register-inner { padding:2rem; }
+    .tl-item { grid-template-columns:80px 1fr; gap:1rem; }
+    .prize-card.featured { transform:none; }
+    #faq .container { grid-template-columns:1fr !important; }
+    .org-grid { grid-template-columns:repeat(2,1fr); }
+    .mentors-grid { grid-template-columns:repeat(2,1fr); }
+    .challenges-grid { grid-template-columns:1fr; }
+    .special-prizes { grid-template-columns:1fr 1fr; }
+    .track-winners-grid { grid-template-columns:1fr 1fr; }
+  }
+  @media(max-width:480px) {
+    .countdown { gap:.5rem; }
+    .cd-box { padding:.55rem .8rem; }
+    .cd-num { font-size:1.9rem; }
+    .cd-sep { font-size:1.6rem; }
+    .org-grid { grid-template-columns:repeat(2,1fr); }
+    .footer-grid { grid-template-columns:1fr; }
+    .hero-btns { flex-direction:column; align-items:center; }
+    .section-title { font-size:clamp(1.6rem,5vw,2.5rem); }
+    .special-prizes { grid-template-columns:1fr; }
+    .prizes-grid { grid-template-columns:1fr; }
+    .mentors-grid { grid-template-columns:repeat(2,1fr); }
+    .timeline-tabs { flex-direction:column; gap:.5rem; }
+    .nav-logo { font-size:1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- PARTICLES CANVAS -->
+<canvas id="particles"></canvas>
+
+<!-- TOAST -->
+<div id="toast">
+  <i data-lucide="check-circle" width="18" height="18"></i>
+  <span id="toast-msg">You're registered! Welcome to HackTitan 🚀</span>
+</div>
+
+<!-- ═══════════════════════════════ NAV ══════════════════════════════ -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <div class="logo-icon">
+      <i data-lucide="zap" width="20" height="20" color="#000"></i>
+    </div>
+    HackTitan
+  </a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#tracks">Tracks</a></li>
+    <li><a href="#prizes">Prizes</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#organizers">Team</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <a href="#register" class="nav-cta-mobile">Register Now</a>
+  </ul>
+  <a href="#register" class="nav-cta">Register Now</a>
+  <div class="burger" id="burger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════ HERO ═════════════════════════════ -->
+<section id="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <!-- HARDWARE PANEL ← LEFT DECORATION -->
+  <div class="hero-hw-wrap" aria-hidden="true">
+    <div class="hw-panel" id="hero-hw">
+      <div class="hw-header">
+        <span class="hw-dot" style="background:#FF5F56"></span>
+        <span class="hw-dot" style="background:#FFBD2E"></span>
+        <span class="hw-dot" style="background:#27C93F"></span>
+        <span class="hw-title">hacktitan-hw // board monitor</span>
+      </div>
+      <div class="hw-board">
+        <div class="hw-chip span2">
+          <span class="hw-led f"></span>
+          <div class="hw-chip-lbl">CPU</div>
+          <div class="hw-chip-sub">Ryzen 9 7950X</div>
+        </div>
+        <div class="hw-chip span2">
+          <span class="hw-led s"></span>
+          <div class="hw-chip-lbl">GPU</div>
+          <div class="hw-chip-sub">RTX 4090</div>
+        </div>
+        <div class="hw-chip span2">
+          <span class="hw-led"></span>
+          <div class="hw-chip-lbl">RAM</div>
+          <div class="hw-chip-sub">128 GB DDR5</div>
+        </div>
+        <div class="hw-chip">
+          <span class="hw-led off"></span>
+          <div class="hw-chip-lbl">I/O</div>
+          <div class="hw-chip-sub">USB-C 4</div>
+        </div>
+        <div class="hw-chip">
+          <span class="hw-led s"></span>
+          <div class="hw-chip-lbl">PWR</div>
+          <div class="hw-chip-sub">1000 W</div>
+        </div>
+        <div class="hw-chip">
+          <span class="hw-led f"></span>
+          <div class="hw-chip-lbl">NET</div>
+          <div class="hw-chip-sub">10 GbE</div>
+        </div>
+        <div class="hw-chip">
+          <span class="hw-led"></span>
+          <div class="hw-chip-lbl">SSD</div>
+          <div class="hw-chip-sub">4 TB NVMe</div>
+        </div>
+      </div>
+      <div class="hw-traces">
+        <div class="hw-trace"></div>
+        <div class="hw-trace"></div>
+        <div class="hw-trace"></div>
+      </div>
+      <div class="hw-stats">
+        <div class="hw-stat-row">
+          <span class="hw-stat-lbl">CPU</span>
+          <div class="hw-stat-bar"><div class="hw-stat-fill" style="width:78%"></div></div>
+          <span class="hw-stat-val">78%</span>
+        </div>
+        <div class="hw-stat-row">
+          <span class="hw-stat-lbl">GPU</span>
+          <div class="hw-stat-bar"><div class="hw-stat-fill" style="width:94%"></div></div>
+          <span class="hw-stat-val">94%</span>
+        </div>
+        <div class="hw-stat-row">
+          <span class="hw-stat-lbl">RAM</span>
+          <div class="hw-stat-bar"><div class="hw-stat-fill" style="width:62%"></div></div>
+          <span class="hw-stat-val">62%</span>
+        </div>
+        <div class="hw-stat-row">
+          <span class="hw-stat-lbl">NET</span>
+          <div class="hw-stat-bar"><div class="hw-stat-fill" style="width:45%"></div></div>
+          <span class="hw-stat-val">45%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPUTER SCREEN → RIGHT DECORATION (45° angle) -->
+  <div class="hero-laptop-wrap">
+    <div class="hero-laptop" id="hero-laptop">
+      <div class="laptop-lid">
+        <div class="laptop-cam-row"><span class="laptop-cam-dot"></span></div>
+        <div class="laptop-screen-inner">
+          <div class="term-bar">
+            <span class="t-dot" style="background:#FF5F56"></span>
+            <span class="t-dot" style="background:#FFBD2E"></span>
+            <span class="t-dot" style="background:#27C93F"></span>
+            <span class="t-title-txt">hacktitan@iwu: ~/project</span>
+          </div>
+          <div class="term-body" id="term-body"></div>
+        </div>
+      </div>
+      <div class="laptop-hinge-bar"></div>
+      <div class="laptop-base">
+        <div class="laptop-kb" id="laptop-kb"></div>
+        <div class="laptop-trackpad"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER CONTENT -->
+  <div class="hero-content">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    REGISTRATION OPEN - JANUARY 1st, 2027
+  </div>
+
+  <h1 class="glitch" data-text="HACK TITAN">
+    HACK <span class="green">TITAN</span>
+  </h1>
+
+  <p class="hero-sub">
+    <span class="typewriter" id="typewriter"></span>
+  </p>
+
+  <div class="hero-date">
+    <i data-lucide="map-pin" width="16" height="16"></i>
+    The Patrick Idea Center, Illinois Wesleyan University &nbsp;·&nbsp;
+    <i data-lucide="calendar" width="16" height="16"></i>
+    March 20th & 21st, 2027
+  </div>
+
+  <div class="hero-btns">
+    <a href="#register" class="btn-primary">
+      <i data-lucide="rocket" width="18" height="18"></i>
+      Register Now
+    </a>
+    <a href="#about" class="btn-outline">
+      <i data-lucide="play-circle" width="18" height="18"></i>
+      Learn More
+    </a>
+  </div>
+
+  <div class="countdown-wrap">
+    <p class="countdown-label"><i data-lucide="timer" width="12" height="12" style="display:inline-block;vertical-align:middle;margin-right:4px;"></i> Hackathon Begins In</p>
+    <div class="countdown">
+      <div class="cd-unit">
+        <div class="cd-box"><div class="cd-num" id="cd-days">00</div></div>
+        <div class="cd-lbl">Days</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <div class="cd-box"><div class="cd-num" id="cd-hours">00</div></div>
+        <div class="cd-lbl">Hours</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <div class="cd-box"><div class="cd-num" id="cd-mins">00</div></div>
+        <div class="cd-lbl">Minutes</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <div class="cd-box"><div class="cd-num" id="cd-secs">00</div></div>
+        <div class="cd-lbl">Seconds</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-down">
+    <span>SCROLL</span>
+    <div class="scroll-arrow"><i data-lucide="chevron-down" width="20" height="20"></i></div>
+  </div>
+  </div><!-- /.hero-content -->
+</section>
+
+<!-- ══════════════════════════════ ABOUT ═════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="reveal-left">
+        <div class="section-tag"><i data-lucide="info" width="12" height="12"></i> About</div>
+        <h2 class="section-title">24 Hours to <span>Change Everything</span></h2>
+        <p class="section-desc">HackTitan is Illinois Wesleyan's flagship hackathon, a 24-hour sprint where builders, designers, and dreamers converge to ship projects that actually matter.</p>
+        <div class="features-list">
+          <div class="feature-item">
+            <div class="fi-icon"><i data-lucide="users" width="18" height="18"></i></div>
+            <div class="fi-text">
+              <strong>Open to Everyone</strong>
+              <span>Students of all majors - no CS degree required, just curiosity.</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="fi-icon"><i data-lucide="cpu" width="18" height="18"></i></div>
+            <div class="fi-text">
+              <strong>Hardware & Cloud Credits</strong>
+              <span>Free API credits + hardware lab access for the weekend.</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="fi-icon"><i data-lucide="utensils" width="18" height="18"></i></div>
+            <div class="fi-text">
+              <strong>Free Food & Swag</strong>
+              <span>Meals, snacks, and legendary HackTitan merch on us.</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="fi-icon"><i data-lucide="briefcase" width="18" height="18"></i></div>
+            <div class="fi-text">
+              <strong>Recruiter Expo</strong>
+              <span>Top companies watching - internships and jobs up for grabs.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal-right">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num" data-count="150">0</div>
+            <div class="stat-lbl"><i data-lucide="users" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:4px;"></i> Hackers</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" data-count="10000" data-prefix="$">0</div>
+            <div class="stat-lbl"><i data-lucide="trophy" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:4px;"></i> Prize Pool</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" data-count="24">0</div>
+            <div class="stat-lbl"><i data-lucide="clock" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:4px;"></i> Hours</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" data-count="40">0</div>
+            <div class="stat-lbl"><i data-lucide="star" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:4px;"></i> Mentors</div>
+          </div>
+        </div>
+        <!-- ABOUT HARDWARE DECORATION -->
+        <div class="about-hw-panel" aria-hidden="true">
+          <div class="hw-panel" id="about-hw">
+            <div class="hw-header">
+              <span class="hw-dot" style="background:#FF5F56"></span>
+              <span class="hw-dot" style="background:#FFBD2E"></span>
+              <span class="hw-dot" style="background:#27C93F"></span>
+              <span class="hw-title">hacktitan-srv // event stack</span>
+            </div>
+            <div class="hw-board">
+              <div class="hw-chip span2">
+                <span class="hw-led f"></span>
+                <div class="hw-chip-lbl">SRV</div>
+                <div class="hw-chip-sub">AWS us-east-1</div>
+              </div>
+              <div class="hw-chip span2">
+                <span class="hw-led s"></span>
+                <div class="hw-chip-lbl">API</div>
+                <div class="hw-chip-sub">GraphQL 3.0</div>
+              </div>
+              <div class="hw-chip">
+                <span class="hw-led"></span>
+                <div class="hw-chip-lbl">DB</div>
+                <div class="hw-chip-sub">Postgres</div>
+              </div>
+              <div class="hw-chip">
+                <span class="hw-led off"></span>
+                <div class="hw-chip-lbl">CDN</div>
+                <div class="hw-chip-sub">CloudFront</div>
+              </div>
+              <div class="hw-chip">
+                <span class="hw-led f"></span>
+                <div class="hw-chip-lbl">PKT</div>
+                <div class="hw-chip-sub">10 GbE</div>
+              </div>
+              <div class="hw-chip">
+                <span class="hw-led s"></span>
+                <div class="hw-chip-lbl">AUTH</div>
+                <div class="hw-chip-sub">OAuth 2.0</div>
+              </div>
+            </div>
+            <div class="hw-traces">
+              <div class="hw-trace"></div>
+              <div class="hw-trace"></div>
+              <div class="hw-trace"></div>
+            </div>
+            <div class="hw-stats">
+              <div class="hw-stat-row">
+                <span class="hw-stat-lbl">SRV</span>
+                <div class="hw-stat-bar"><div class="hw-stat-fill" style="width:45%"></div></div>
+                <span class="hw-stat-val">45%</span>
+              </div>
+              <div class="hw-stat-row">
+                <span class="hw-stat-lbl">API</span>
+                <div class="hw-stat-bar"><div class="hw-stat-fill" style="width:72%"></div></div>
+                <span class="hw-stat-val">72%</span>
+              </div>
+              <div class="hw-stat-row">
+                <span class="hw-stat-lbl">DB</span>
+                <div class="hw-stat-bar"><div class="hw-stat-fill" style="width:38%"></div></div>
+                <span class="hw-stat-val">38%</span>
+              </div>
+              <div class="hw-stat-row">
+                <span class="hw-stat-lbl">CDN</span>
+                <div class="hw-stat-bar"><div class="hw-stat-fill" style="width:82%"></div></div>
+                <span class="hw-stat-val">82%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ TRACKS ════════════════════════════ -->
+<section id="tracks">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:0">
+      <div class="section-tag" style="margin:0 auto"><i data-lucide="layers" width="12" height="12"></i> Tracks</div>
+      <h2 class="section-title" style="margin-top:.75rem">Pick Your <span>Battlefield</span></h2>
+      <p class="section-desc" style="margin:0 auto">Four cutting-edge tracks. One weekend. Infinite possibilities.</p>
+    </div>
+    <div class="tracks-grid">
+      <div class="track-card reveal">
+        <div class="track-icon"><i data-lucide="brain" width="24" height="24"></i></div>
+        <h3>AI &amp; Machine Learning</h3>
+        <p>Build intelligent systems, LLM-powered apps, computer vision tools, and autonomous agents.</p>
+        <div class="track-tag">Track 01</div>
+      </div>
+      <div class="track-card reveal" style="transition-delay:.1s">
+        <div class="track-icon"><i data-lucide="heart-pulse" width="24" height="24"></i></div>
+        <h3>HealthTech</h3>
+        <p>Digital health, wearables, mental wellness platforms, and patient care AI.</p>
+        <div class="track-tag">Track 02</div>
+      </div>
+      <div class="track-card reveal" style="transition-delay:.2s">
+        <div class="track-icon"><i data-lucide="leaf" width="24" height="24"></i></div>
+        <h3>Sustainability</h3>
+        <p>Climate tech, carbon tracking, green energy optimization, and eco-smart systems.</p>
+        <div class="track-tag">Track 03</div>
+      </div>
+      <div class="track-card reveal" style="transition-delay:.3s">
+        <div class="track-icon"><i data-lucide="lightbulb" width="24" height="24"></i></div>
+        <h3>Open Innovation</h3>
+        <p>No constraints. Build anything that solves a real problem and wows the judges.</p>
+        <div class="track-tag">Track 04</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ COMPANY CHALLENGES ════════════════════ -->
+<section id="challenges">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-tag" style="margin:0 auto"><i data-lucide="building-2" width="12" height="12"></i> Company Challenges</div>
+      <h2 class="section-title" style="margin-top:.75rem">Challenges from <span>Top Companies</span></h2>
+      <p class="section-desc" style="margin:0 auto">Win additional prizes by tackling real problems posed by industry leaders — on top of your track submission.</p>
+    </div>
+    <div class="challenges-grid">
+
+      <div class="challenge-card reveal">
+        <div class="challenge-header">
+          <div class="company-badge" style="background:rgba(66,133,244,.12);color:#4285F4;border-color:rgba(66,133,244,.25);">GOOG</div>
+          <div>
+            <div class="challenge-company">Google</div>
+            <h3>Build with Gemini</h3>
+          </div>
+        </div>
+        <p>Create a multimodal application using the Gemini API — combining text, image, audio, or video to solve a meaningful problem.</p>
+        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $3,000 + Google Cloud Credits</div>
+      </div>
+
+      <div class="challenge-card reveal" style="transition-delay:.08s">
+        <div class="challenge-header">
+          <div class="company-badge" style="background:rgba(205,127,50,.1);color:#b8872a;border-color:rgba(205,127,50,.25);">ANTH</div>
+          <div>
+            <div class="challenge-company">Anthropic</div>
+            <h3>Human × Claude Collab</h3>
+          </div>
+        </div>
+        <p>Build a tool where Claude genuinely amplifies human capability — not replaces it. Show thoughtful, safe AI integration.</p>
+        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $3,000 + API Credits</div>
+      </div>
+
+      <div class="challenge-card reveal" style="transition-delay:.16s">
+        <div class="challenge-header">
+          <div class="company-badge" style="background:rgba(0,200,83,.1);color:var(--green);border-color:rgba(0,200,83,.25);">STRP</div>
+          <div>
+            <div class="challenge-company">Stripe</div>
+            <h3>Payments Re-imagined</h3>
+          </div>
+        </div>
+        <p>Use the Stripe API to build a novel payments experience — subscriptions, marketplaces, instant payouts, or financial tooling.</p>
+        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $2,500 + Stripe Credits</div>
+      </div>
+
+      <div class="challenge-card reveal" style="transition-delay:.24s">
+        <div class="challenge-header">
+          <div class="company-badge" style="background:rgba(255,153,0,.1);color:#FF9900;border-color:rgba(255,153,0,.25);">AWS</div>
+          <div>
+            <div class="challenge-company">Amazon Web Services</div>
+            <h3>Serverless at Scale</h3>
+          </div>
+        </div>
+        <p>Deploy a fully serverless architecture on AWS — Lambda, DynamoDB, S3, and beyond. Judged on scalability and cloud-native design.</p>
+        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $2,500 + AWS Credits</div>
+      </div>
+
+      <div class="challenge-card reveal" style="transition-delay:.32s">
+        <div class="challenge-header">
+          <div class="company-badge" style="background:rgba(0,120,212,.1);color:#0078D4;border-color:rgba(0,120,212,.25);">MSFT</div>
+          <div>
+            <div class="challenge-company">Microsoft</div>
+            <h3>Copilot for Everyone</h3>
+          </div>
+        </div>
+        <p>Extend or build a Copilot-style experience using Azure OpenAI or GitHub Copilot APIs to supercharge a developer workflow.</p>
+        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $2,000 + Azure Credits</div>
+      </div>
+
+      <div class="challenge-card reveal" style="transition-delay:.4s">
+        <div class="challenge-header">
+          <div class="company-badge" style="background:rgba(36,41,47,.4);color:#e8f5e9;border-color:rgba(255,255,255,.1);">GH</div>
+          <div>
+            <div class="challenge-company">GitHub</div>
+            <h3>Best Developer Tool</h3>
+          </div>
+        </div>
+        <p>Build something that makes developers' lives measurably better — a CLI, extension, automation, or open-source contribution tool.</p>
+        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $2,000 + GitHub Swag</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ PRIZES ════════════════════════════ -->
+<section id="prizes">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-tag" style="margin:0 auto"><i data-lucide="trophy" width="12" height="12"></i> Prizes</div>
+      <h2 class="section-title" style="margin-top:.75rem">Win <span>Big</span></h2>
+      <p class="section-desc" style="margin:0 auto">$50,000 in cash and prizes up for grabs across all tracks.</p>
+    </div>
+    <!-- Track Winners -->
+    <div class="track-winners-label reveal">Track Winners</div>
+    <div class="track-winners-grid reveal">
+      <div class="track-winner-card">
+        <div class="tw-icon"><i data-lucide="brain" width="26" height="26"></i></div>
+        <div class="tw-track">AI &amp; ML</div>
+        <div class="tw-amount">$5,000</div>
+        <div class="tw-label">Track Champion</div>
+      </div>
+      <div class="track-winner-card">
+        <div class="tw-icon"><i data-lucide="heart-pulse" width="26" height="26"></i></div>
+        <div class="tw-track">HealthTech</div>
+        <div class="tw-amount">$5,000</div>
+        <div class="tw-label">Track Champion</div>
+      </div>
+      <div class="track-winner-card">
+        <div class="tw-icon"><i data-lucide="leaf" width="26" height="26"></i></div>
+        <div class="tw-track">Sustainability</div>
+        <div class="tw-amount">$5,000</div>
+        <div class="tw-label">Track Champion</div>
+      </div>
+      <div class="track-winner-card">
+        <div class="tw-icon"><i data-lucide="lightbulb" width="26" height="26"></i></div>
+        <div class="tw-track">Open Innovation</div>
+        <div class="tw-amount">$5,000</div>
+        <div class="tw-label">Track Champion</div>
+      </div>
+    </div>
+
+    <!-- Special Prizes -->
+    <div class="special-prizes reveal">
+      <div class="special-card">
+        <div class="special-icon"><i data-lucide="building-2" width="24" height="24"></i></div>
+        <div><strong>Best Company Challenge</strong><span>$2,000 + sponsor perks</span></div>
+      </div>
+      <div class="special-card">
+        <div class="special-icon"><i data-lucide="sparkles" width="24" height="24"></i></div>
+        <div><strong>Most Creative</strong><span>$1,500 + Design Studio</span></div>
+      </div>
+      <div class="special-card">
+        <div class="special-icon"><i data-lucide="user" width="24" height="24"></i></div>
+        <div><strong>Solo Hacker</strong><span>$1,000 Cash</span></div>
+      </div>
+      <div class="special-card">
+        <div class="special-icon"><i data-lucide="graduation-cap" width="24" height="24"></i></div>
+        <div><strong>Best First-Timer</strong><span>$500 + Mentorship Pack</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SCHEDULE ══════════════════════════ -->
+<section id="schedule">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-tag"><i data-lucide="calendar-days" width="12" height="12"></i> Schedule</div>
+      <h2 class="section-title">24 Hours, <span>Mapped Out</span></h2>
+    </div>
+    <div class="timeline-tabs reveal">
+      <button class="tab-btn active" onclick="switchDay('day1',this)">
+        <i data-lucide="sun" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:6px;"></i> Day 1 — March 20
+      </button>
+      <button class="tab-btn" onclick="switchDay('day2',this)">
+        <i data-lucide="flag" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:6px;"></i> Day 2 — March 21
+      </button>
+    </div>
+
+    <div id="day1" class="timeline active">
+      <div class="tl-item"><div class="tl-time">9:00 AM</div><div class="tl-body"><strong><i data-lucide="door-open" width="14" height="14"></i> Check-In &amp; Badge Pickup</strong><p>Arrive, grab your badge, meet your fellow titans.</p></div></div>
+      <div class="tl-item"><div class="tl-time">10:00 AM</div><div class="tl-body"><strong><i data-lucide="mic" width="14" height="14"></i> Opening Ceremony</strong><p>Keynote from our headline sponsors, rules brief, team formation mixer.</p></div></div>
+      <div class="tl-item"><div class="tl-time">11:00 AM</div><div class="tl-body"><strong><i data-lucide="zap" width="14" height="14"></i> Hacking Begins — Clock Starts!</strong><p>24-hour timer starts. APIs unlock. Company challenges go live.</p></div></div>
+      <div class="tl-item"><div class="tl-time">1:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Lunch + Company Booths Open</strong><p>Free catered lunch. Chat with Google, Anthropic, Stripe, AWS, Microsoft &amp; GitHub reps.</p></div></div>
+      <div class="tl-item"><div class="tl-time">3:00 PM</div><div class="tl-body"><strong><i data-lucide="users" width="14" height="14"></i> Workshop: Build with AI APIs</strong><p>Hands-on with Claude, Gemini, and GPT-4o. Hosted by Anthropic &amp; Google engineers.</p></div></div>
+      <div class="tl-item"><div class="tl-time">5:00 PM</div><div class="tl-body"><strong><i data-lucide="star" width="14" height="14"></i> Mentor Office Hours — Round 1</strong><p>Book 1:1 slots with industry mentors across all 4 tracks.</p></div></div>
+      <div class="tl-item"><div class="tl-time">7:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Dinner</strong><p>Fuel up. The real grind begins tonight.</p></div></div>
+      <div class="tl-item"><div class="tl-time">10:00 PM</div><div class="tl-body"><strong><i data-lucide="coffee" width="14" height="14"></i> Late-Night Snacks + Mentor Office Hours — Round 2</strong><p>Pizza, energy drinks, and last-call mentor sessions.</p></div></div>
+      <div class="tl-item"><div class="tl-time">Midnight</div><div class="tl-body"><strong><i data-lucide="moon" width="14" height="14"></i> Deep Work Hours</strong><p>Quiet mode. Heads down. 11 hours left on the clock.</p></div></div>
+    </div>
+
+    <div id="day2" class="timeline">
+      <div class="tl-item"><div class="tl-time">7:00 AM</div><div class="tl-body"><strong><i data-lucide="sunrise" width="14" height="14"></i> Breakfast &amp; Final Sprint</strong><p>Wake up fuel. 4 hours left — polish, deploy, and prep your demo.</p></div></div>
+      <div class="tl-item"><div class="tl-time">10:30 AM</div><div class="tl-body"><strong><i data-lucide="alert-circle" width="14" height="14"></i> 30-Minute Warning</strong><p>Wrap up. Start writing your README and submission form.</p></div></div>
+      <div class="tl-item"><div class="tl-time">11:00 AM</div><div class="tl-body"><strong><i data-lucide="flag" width="14" height="14"></i> Submissions Close</strong><p>Forks down. Final commit. All 4 track submissions locked.</p></div></div>
+      <div class="tl-item"><div class="tl-time">11:30 AM</div><div class="tl-body"><strong><i data-lucide="monitor" width="14" height="14"></i> Track Demos — All 4 Tracks Simultaneously</strong><p>Each team presents to their track judges. 3 min demo + 2 min Q&amp;A.</p></div></div>
+      <div class="tl-item"><div class="tl-time">1:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Lunch &amp; Judge Deliberation</strong><p>Eat, decompress — track winners and finalists being selected.</p></div></div>
+      <div class="tl-item"><div class="tl-time">2:30 PM</div><div class="tl-body"><strong><i data-lucide="star" width="14" height="14"></i> Grand Finals — Top Teams Present</strong><p>Track winners compete for Grand Champion. Live audience, live judging.</p></div></div>
+      <div class="tl-item"><div class="tl-time">4:00 PM</div><div class="tl-body"><strong><i data-lucide="trophy" width="14" height="14"></i> Award Ceremony</strong><p>Grand Champion + 4 Track Winners + Company Challenge winners announced.</p></div></div>
+      <div class="tl-item"><div class="tl-time">5:00 PM</div><div class="tl-body"><strong><i data-lucide="party-popper" width="14" height="14"></i> Closing Celebration</strong><p>Networking mixer, music, photos, and see you next year.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ MENTORS ═══════════════════════════ -->
+<section id="mentors">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-tag" style="margin:0 auto"><i data-lucide="graduation-cap" width="12" height="12"></i> Mentors</div>
+      <h2 class="section-title" style="margin-top:.75rem">Learn from the <span>Best</span></h2>
+      <p class="section-desc" style="margin:0 auto">Industry veterans ready to guide you through your 24-hour build.</p>
+    </div>
+    <div class="mentors-grid">
+      <div class="mentor-card reveal">
+        <div class="mentor-avatar">AK</div>
+        <h4>Aisha Khan</h4>
+        <p>Staff Engineer</p>
+        <span>Google DeepMind</span>
+      </div>
+      <div class="mentor-card reveal" style="transition-delay:.07s">
+        <div class="mentor-avatar">ML</div>
+        <h4>Marcus Lee</h4>
+        <p>Co-Founder</p>
+        <span>Titan Ventures</span>
+      </div>
+      <div class="mentor-card reveal" style="transition-delay:.14s">
+        <div class="mentor-avatar">SP</div>
+        <h4>Sofia Patel</h4>
+        <p>ML Research Lead</p>
+        <span>Anthropic</span>
+      </div>
+      <div class="mentor-card reveal" style="transition-delay:.21s">
+        <div class="mentor-avatar">JR</div>
+        <h4>James Rowe</h4>
+        <p>Principal Engineer</p>
+        <span>Stripe</span>
+      </div>
+      <div class="mentor-card reveal" style="transition-delay:.28s">
+        <div class="mentor-avatar">YN</div>
+        <h4>Yuki Nakamura</h4>
+        <p>Web3 Lead</p>
+        <span>Coinbase</span>
+      </div>
+      <div class="mentor-card reveal" style="transition-delay:.35s">
+        <div class="mentor-avatar">CR</div>
+        <h4>Clara Reyes</h4>
+        <p>Product Director</p>
+        <span>Microsoft</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ ORGANIZERS ════════════════════════════ -->
+<section id="organizers">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-tag" style="margin:0 auto"><i data-lucide="users-2" width="12" height="12"></i> Team</div>
+      <h2 class="section-title" style="margin-top:.75rem">Meet the <span>Organizers</span></h2>
+      <p class="section-desc" style="margin:0 auto">The team making HackTitan 2027 happen — your point of contact for everything.</p>
+    </div>
+    <div class="org-grid">
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal">
+        <div class="org-avatar">HT</div>
+        <h4>Hira Tin</h4>
+        <p class="org-major">Computer Science</p>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.06s">
+        <div class="org-avatar">AR</div>
+        <h4>Alex Rivera</h4>
+        <p class="org-major">CS &amp; Data Science</p>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.12s">
+        <div class="org-avatar">PN</div>
+        <h4>Priya Nair</h4>
+        <p class="org-major">CS &amp; Biology</p>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.18s">
+        <div class="org-avatar">JK</div>
+        <h4>Jordan Kim</h4>
+        <p class="org-major">CS &amp; Mathematics</p>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.24s">
+        <div class="org-avatar">MC</div>
+        <h4>Marcus Chen</h4>
+        <p class="org-major">CS &amp; Business</p>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.30s">
+        <div class="org-avatar">SW</div>
+        <h4>Sofia Williams</h4>
+        <p class="org-major">CS &amp; Psychology</p>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ ADVISORS ══════════════════════════════ -->
+<section id="advisors">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-tag" style="margin:0 auto"><i data-lucide="award" width="12" height="12"></i> Advisors</div>
+      <h2 class="section-title" style="margin-top:.75rem">Faculty <span>Advisors</span></h2>
+      <p class="section-desc" style="margin:0 auto">IWU faculty and industry advisors who guide and champion HackTitan.</p>
+    </div>
+    <div class="org-grid" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))">
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal">
+        <div class="org-avatar" style="background:linear-gradient(135deg,#00401A,#00802A)">CA</div>
+        <h4>Dr. Carolyn Anderson</h4>
+        <p class="org-major">Computer Science</p>
+        <span class="org-li" style="color:var(--muted);font-size:.72rem;margin-top:.2rem;display:block">Illinois Wesleyan University</span>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.08s">
+        <div class="org-avatar" style="background:linear-gradient(135deg,#00401A,#00802A)">MP</div>
+        <h4>Dr. Mark Peterson</h4>
+        <p class="org-major">CS Department Chair</p>
+        <span class="org-li" style="color:var(--muted);font-size:.72rem;margin-top:.2rem;display:block">Illinois Wesleyan University</span>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.16s">
+        <div class="org-avatar" style="background:linear-gradient(135deg,#00401A,#00802A)">EZ</div>
+        <h4>Dr. Emily Zhao</h4>
+        <p class="org-major">CS &amp; Innovation Studies</p>
+        <span class="org-li" style="color:var(--muted);font-size:.72rem;margin-top:.2rem;display:block">Illinois Wesleyan University</span>
+        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ FAQ ═══════════════════════════════ -->
+<section id="faq">
+  <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start">
+    <div class="reveal-left">
+      <div class="section-tag"><i data-lucide="help-circle" width="12" height="12"></i> FAQ</div>
+      <h2 class="section-title">Got <span>Questions?</span></h2>
+      <p class="section-desc">Everything you need to know before you show up to build.</p>
+      <div style="margin-top:2rem;display:flex;flex-direction:column;gap:.75rem">
+        <a href="mailto:hacktitan@iwu.edu" style="display:flex;align-items:center;gap:.5rem;color:var(--green);font-weight:600;text-decoration:none;font-size:.9rem">
+          <i data-lucide="mail" width="16" height="16"></i> hacktitan@iwu.edu
+        </a>
+        <a href="#" style="display:flex;align-items:center;gap:.5rem;color:var(--green);font-weight:600;text-decoration:none;font-size:.9rem">
+          <i data-lucide="message-circle" width="16" height="16"></i> Join our Discord
+        </a>
+      </div>
+    </div>
+    <div class="faq-list reveal-right">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Who can participate?
+          <i data-lucide="chevron-down" width="18" height="18" class="faq-icon"></i>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Any current college student is welcome. You don't need a CS background — designers, pre-med, business students all thrive at HackTitan. High school students may join with a mentor's approval.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Do I need a team?
+          <i data-lucide="chevron-down" width="18" height="18" class="faq-icon"></i>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Teams can be 1–4 people. Solo hacking is allowed and there's even a special prize for it. We'll have team formation during opening ceremonies if you need teammates.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is it really free?
+          <i data-lucide="chevron-down" width="18" height="18" class="faq-icon"></i>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">100% free to attend. That includes all meals (breakfast, lunch, dinner x2 + snacks), swag, and all workshops. We don't charge a dime.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What should I bring?
+          <i data-lucide="chevron-down" width="18" height="18" class="faq-icon"></i>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Your laptop, charger, any hardware you want to hack with, a sleeping bag if you're staying overnight, and your best ideas. We'll provide everything else.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can I start before the hackathon?
+          <i data-lucide="chevron-down" width="18" height="18" class="faq-icon"></i>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Brainstorming is fine. No code can be written before the start gun. All code must be written during the 24-hour window — judges verify via git history.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How are projects judged?
+          <i data-lucide="chevron-down" width="18" height="18" class="faq-icon"></i>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Projects are scored on: Innovation (30%), Technical Depth (25%), Impact (25%), and Presentation (20%). Each track has a dedicated panel of industry judges.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ REGISTER ══════════════════════════ -->
+<section id="register">
+  <div class="container">
+    <div class="register-inner reveal">
+      <h2>Join the <span style="color:var(--green)">Titan</span> Army</h2>
+      <p>Secure your spot — spots fill fast. Registration opens January 1, 2027 and closes March 15, 2027.</p>
+      <form onsubmit="handleRegister(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="Ada" required />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Lovelace" required />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="ada@iwu.edu" required />
+          </div>
+          <div class="form-group">
+            <label>School / University</label>
+            <input type="text" placeholder="Illinois Wesleyan" required />
+          </div>
+          <div class="form-group">
+            <label>Track Interest</label>
+            <select required>
+              <option value="" disabled selected>Choose a track…</option>
+              <option>AI &amp; Machine Learning</option>
+              <option>HealthTech</option>
+              <option>Sustainability</option>
+              <option>Open Innovation</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Team Status</label>
+            <select>
+              <option>I have a full team</option>
+              <option>Looking for teammates</option>
+              <option>Going solo</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>What will you build? (Optional)</label>
+            <textarea placeholder="Give us a sneak peek at your idea…"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="form-submit">
+          <i data-lucide="rocket" width="18" height="18"></i>
+          Launch My Registration
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ FOOTER ════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo" style="margin-bottom:.75rem">
+        <div class="logo-icon"><i data-lucide="zap" width="20" height="20" color="#000"></i></div>
+        HackTitan 2027
+      </div>
+      <p>Built by hackers, for hackers. Illinois Wesleyan University's flagship hackathon — 24 hours to build the future.</p>
+      <div class="social-row">
+        <a href="#" class="social-btn"><i data-lucide="twitter" width="16" height="16"></i></a>
+        <a href="#" class="social-btn"><i data-lucide="github" width="16" height="16"></i></a>
+        <a href="#" class="social-btn"><i data-lucide="linkedin" width="16" height="16"></i></a>
+        <a href="#" class="social-btn"><i data-lucide="instagram" width="16" height="16"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Event</h4>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#tracks">Tracks</a></li>
+        <li><a href="#prizes">Prizes</a></li>
+        <li><a href="#schedule">Schedule</a></li>
+        <li><a href="#mentors">Mentors</a></li>
+        <li><a href="#organizers">Organizers</a></li>
+        <li><a href="#advisors">Advisors</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="#">Hacker Guide</a></li>
+        <li><a href="#">Code of Conduct</a></li>
+        <li><a href="#">Submission Rules</a></li>
+        <li><a href="#">Workshop Slides</a></li>
+        <li><a href="#">Discord Server</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hacktitan@iwu.edu">hacktitan@iwu.edu</a></li>
+        <li><a href="#">Sponsor Us</a></li>
+        <li><a href="#">Volunteer</a></li>
+        <li><a href="#">Mentor Sign-Up</a></li>
+        <li><a href="#">Press Kit</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2027 HackTitan — Illinois Wesleyan University &nbsp;·&nbsp; Made with 💚 and way too much caffeine</p>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════ SCRIPTS ═══════════════════════════ -->
+<script>
+/* ── LUCIDE INIT ───────────────────────────────────────────────────── */
+lucide.createIcons();
+
+/* ── CUSTOM CURSOR ─────────────────────────────────────────────────── */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,button,.track-card,.prize-card,.stat-card,.mentor-card,.faq-q,.org-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cursor.style.width='22px'; cursor.style.height='22px';
+    ring.style.width='60px'; ring.style.height='60px';
+    ring.style.opacity='.8';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cursor.style.width='14px'; cursor.style.height='14px';
+    ring.style.width='40px'; ring.style.height='40px';
+    ring.style.opacity='.5';
+  });
+});
+
+/* ── PARTICLES ─────────────────────────────────────────────────────── */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W,H,pts=[];
+function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+resize(); window.addEventListener('resize',resize);
+
+function rnd(a,b){return a+Math.random()*(b-a);}
+class Particle {
+  constructor(){this.reset();}
+  reset(){
+    this.x=rnd(0,W); this.y=rnd(0,H);
+    this.vx=rnd(-.4,.4); this.vy=rnd(-.4,.4);
+    this.r=rnd(1.5,3.5); this.a=rnd(.2,.7);
+  }
+  update(){
+    this.x+=this.vx; this.y+=this.vy;
+    if(this.x<0||this.x>W||this.y<0||this.y>H) this.reset();
+  }
+  draw(){
+    ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,200,83,${this.a})`; ctx.fill();
+  }
+}
+for(let i=0;i<50;i++) pts.push(new Particle());
+function animParticles(){
+  ctx.clearRect(0,0,W,H);
+  pts.forEach(p=>{p.update();p.draw();});
+  // connections
+  for(let i=0;i<pts.length;i++){
+    for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100){
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
+        ctx.strokeStyle=`rgba(0,200,83,${(1-d/100)*.13})`;
+        ctx.lineWidth=1; ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// mouse repel
+document.addEventListener('mousemove',e=>{
+  pts.forEach(p=>{
+    const dx=p.x-e.clientX, dy=p.y-e.clientY;
+    const d=Math.sqrt(dx*dx+dy*dy);
+    if(d<100){ p.vx+=dx/d*.3; p.vy+=dy/d*.3; }
+  });
+});
+
+/* ── TYPEWRITER ────────────────────────────────────────────────────── */
+const phrases=['24 hours. 4 tracks. $10,000 in prizes.','Build what the world needs next.','Code. Create. Conquer.','Your best project starts here.'];
+let pi=0,ci=0,del=false;
+const tw=document.getElementById('typewriter');
+(function type(){
+  const cur=phrases[pi];
+  tw.textContent=del?cur.slice(0,ci--):cur.slice(0,ci++);
+  if(!del&&ci>cur.length){del=true;setTimeout(type,1800);return;}
+  if(del&&ci<0){del=false;pi=(pi+1)%phrases.length;}
+  setTimeout(type,del?55:80);
+})();
+
+/* ── COUNTDOWN ─────────────────────────────────────────────────────── */
+const target=new Date('2027-03-20T09:00:00');
+function updateCountdown(){
+  const now=new Date(), diff=target-now;
+  if(diff<=0){document.getElementById('cd-days').textContent='00';return;}
+  const d=Math.floor(diff/864e5),
+        h=Math.floor((diff%864e5)/36e5),
+        m=Math.floor((diff%36e5)/6e4),
+        s=Math.floor((diff%6e4)/1e3);
+  document.getElementById('cd-days').textContent=String(d).padStart(2,'0');
+  document.getElementById('cd-hours').textContent=String(h).padStart(2,'0');
+  document.getElementById('cd-mins').textContent=String(m).padStart(2,'0');
+  document.getElementById('cd-secs').textContent=String(s).padStart(2,'0');
+}
+updateCountdown(); setInterval(updateCountdown,1000);
+
+/* ── SCROLL ANIMATIONS ─────────────────────────────────────────────── */
+const revealEls=document.querySelectorAll('.reveal,.reveal-left,.reveal-right');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:.12});
+revealEls.forEach(el=>io.observe(el));
+
+/* ── NAV SCROLL ────────────────────────────────────────────────────── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',scrollY>60);
+});
+
+/* ── STAT COUNTERS ─────────────────────────────────────────────────── */
+const counterEls=document.querySelectorAll('[data-count]');
+const cio=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const el=e.target, target=+el.dataset.count, prefix=el.dataset.prefix||'';
+    let cur=0; const step=target/60;
+    const t=setInterval(()=>{
+      cur=Math.min(cur+step,target);
+      el.textContent=prefix+(cur>=1000?Math.round(cur).toLocaleString():Math.round(cur));
+      if(cur>=target)clearInterval(t);
+    },16);
+    cio.unobserve(el);
+  });
+},{threshold:.5});
+counterEls.forEach(el=>cio.observe(el));
+
+/* ── PRIZE 3D TILT ─────────────────────────────────────────────────── */
+document.querySelectorAll('.prize-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const {left,top,width,height}=card.getBoundingClientRect();
+    const x=(e.clientX-left)/width-.5;
+    const y=(e.clientY-top)/height-.5;
+    card.style.transform=`perspective(800px) rotateY(${x*14}deg) rotateX(${-y*14}deg) scale(1.04)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform=card.classList.contains('featured')?'scale(1.04)':'';
+    card.style.transition='transform .5s ease';
+    setTimeout(()=>card.style.transition='',500);
+  });
+});
+
+/* ── TIMELINE TABS ─────────────────────────────────────────────────── */
+function switchDay(id,btn){
+  document.querySelectorAll('.timeline').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── FAQ ───────────────────────────────────────────────────────────── */
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+  lucide.createIcons();
+}
+
+/* ── MOBILE MENU ───────────────────────────────────────────────────── */
+function toggleMenu(){
+  document.getElementById('nav-links').classList.toggle('open');
+  document.getElementById('burger').classList.toggle('open');
+}
+
+/* ── REGISTER + CONFETTI ───────────────────────────────────────────── */
+function handleRegister(e){
+  e.preventDefault();
+  // confetti burst
+  const colors=['#00C853','#69F0AE','#ffffff','#00FF6E','#A5F3C4'];
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`
+      left:${Math.random()*100}vw; top:${Math.random()*40+30}vh;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${8+Math.random()*10}px; height:${8+Math.random()*10}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      --dx:${(Math.random()-0.5)*300}px;
+      --dy:${-50-Math.random()*300}px;
+      animation-delay:${Math.random()*.5}s;
+      animation-duration:${1.5+Math.random()}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2500);
+  }
+  // toast
+  const toast=document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),4000);
+  e.target.reset();
+}
+
+/* ── SMOOTH ANCHOR SCROLL ──────────────────────────────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+    document.getElementById('nav-links').classList.remove('open');
+  });
+});
+
+/* ── EASTER EGG — KONAMI CODE ──────────────────────────────────────── */
+const konami=[38,38,40,40,37,39,37,39,66,65];let ki=0;
+document.addEventListener('keydown',e=>{
+  if(e.keyCode===konami[ki++]){
+    if(ki===konami.length){
+      ki=0;
+      for(let i=0;i<200;i++){
+        const el=document.createElement('div');
+        el.className='confetti-piece';
+        el.style.cssText=`left:${Math.random()*100}vw;top:${Math.random()*60+20}vh;
+          background:hsl(${Math.random()*360},80%,60%);
+          --dx:${(Math.random()-.5)*500}px;--dy:${-100-Math.random()*400}px;
+          animation-delay:${Math.random()*.5}s;animation-duration:${2+Math.random()}s;`;
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),3000);
+      }
+      showToast('🎮 Konami Code Activated! You\'re a true hacker!');
+    }
+  } else ki=0;
+});
+function showToast(msg){
+  document.getElementById('toast-msg').textContent=msg;
+  const toast=document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),4000);
+}
+
+/* ── LAPTOP KEYBOARD ────────────────────────────────────────────────── */
+(function buildKeyboard(){
+  const kb = document.getElementById('laptop-kb');
+  if(!kb) return;
+
+  function makeKey(label, cls=''){
+    const k = document.createElement('div');
+    k.className = 'key ' + cls;
+    k.textContent = label;
+    k.dataset.key = label.toUpperCase();
+    return k;
+  }
+
+  const rows = [
+    { pre:[['esc','wide']], keys:['F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12'], post:[] },
+    { pre:[], keys:['`','1','2','3','4','5','6','7','8','9','0','-','='], post:[['⌫','wide']] },
+    { pre:[['tab','wide']], keys:['q','w','e','r','t','y','u','i','o','p','[',']','\\'], post:[] },
+    { pre:[['caps','wide']], keys:['a','s','d','f','g','h','j','k','l',';',"'"], post:[['↩','wider']] },
+    { pre:[['⇧','wider']], keys:['z','x','c','v','b','n','m',',','.', '/'], post:[['⇧','wider']] },
+    { pre:[['fn',''],['⌃',''],['⌥',''],['⌘','wide']], keys:[], post:[['⌘','wide'],['⌥',''],['←',''],['↕',''],['→','']] },
+  ];
+
+  rows.forEach(row => {
+    const div = document.createElement('div');
+    div.className = 'kb-row';
+    row.pre.forEach(([lbl,cls]) => div.appendChild(makeKey(lbl, cls)));
+    row.keys.forEach(lbl => div.appendChild(makeKey(lbl)));
+    if(row === rows[rows.length-1]){
+      const sp = makeKey('', 'space');
+      sp.dataset.key = 'SPACE';
+      div.appendChild(sp);
+    }
+    row.post.forEach(([lbl,cls]) => div.appendChild(makeKey(lbl, cls)));
+    kb.appendChild(div);
+  });
+})();
+
+/* ── TERMINAL ANIMATION ─────────────────────────────────────────────── */
+const termPrograms = [
+  [
+    {t:'cmd',  s:40,  text:'$ python train.py --model titan-v2 --epochs 24'},
+    {t:'out',  s:20,  text:'Loading dataset... 12,847 samples  ✓'},
+    {t:'out',  s:20,  text:'Device: CUDA  |  Batch size: 64  |  LR: 3e-4'},
+    {t:'prog', s:18,  text:'[▓▓▓▓░░░░░░░░]  Epoch  6/24  loss: 1.872  acc: 61%'},
+    {t:'prog', s:18,  text:'[▓▓▓▓▓▓▓░░░░░]  Epoch 14/24  loss: 0.634  acc: 83%'},
+    {t:'prog', s:18,  text:'[▓▓▓▓▓▓▓▓▓▓▓▓]  Epoch 24/24  loss: 0.122  acc: 94%'},
+    {t:'suc',  s:22,  text:'✓ Model saved → ./checkpoints/titan_v2.pt'},
+    {t:'suc',  s:22,  text:'✓ Accuracy: 94.3%   F1: 0.941   AUC: 0.978'},
+  ],
+  [
+    {t:'cmd',  s:40,  text:'$ npm create vite@latest titan-app -- --template react-ts'},
+    {t:'out',  s:20,  text:'✔  Scaffolding project in ./titan-app...'},
+    {t:'cmd',  s:38,  text:'$ cd titan-app && npm install'},
+    {t:'out',  s:18,  text:'added 312 packages in 4.2s'},
+    {t:'cmd',  s:38,  text:'$ npm run dev'},
+    {t:'suc',  s:22,  text:'  VITE v5.2.0  ready in 148ms'},
+    {t:'suc',  s:22,  text:'  ➜  Local:   http://localhost:5173/'},
+    {t:'suc',  s:22,  text:'  ➜  Network: http://192.168.1.4:5173/'},
+  ],
+  [
+    {t:'cmd',  s:40,  text:'$ node index.js'},
+    {t:'out',  s:20,  text:'Connecting to HackTitan API...  ✓'},
+    {t:'out',  s:18,  text:'const titan = new HackTitan({'},
+    {t:'out',  s:18,  text:'  model : "claude-opus-4-7",'},
+    {t:'out',  s:18,  text:'  track : "AI & Machine Learning",'},
+    {t:'out',  s:18,  text:'  team  : ["Ada","Alan","Grace"],'},
+    {t:'out',  s:18,  text:'});'},
+    {t:'suc',  s:22,  text:'✓ Project registered!  Good luck, Titans 🚀'},
+  ],
+  [
+    {t:'cmd',  s:40,  text:'$ git init && git add .'},
+    {t:'cmd',  s:38,  text:'$ git commit -m "feat: winning idea v1.0 🚀"'},
+    {t:'out',  s:20,  text:'[main (root-commit) 3fa9b12]  47 files changed'},
+    {t:'cmd',  s:38,  text:'$ curl -sX POST api.hacktitan.io/submit \\'},
+    {t:'out',  s:18,  text:'       -H "Authorization: Bearer $TOKEN" \\'},
+    {t:'out',  s:18,  text:'       -d \'{"track":"AI","repo":"github.com/ada/titan"}\''},
+    {t:'out',  s:20,  text:'{"status":"accepted","score":98.4,"rank":1}'},
+    {t:'suc',  s:22,  text:'🏆  Grand Champion!  Prize: $25,000  🎉'},
+  ],
+  [
+    {t:'cmd',  s:40,  text:'$ docker build -t titan-app .'},
+    {t:'out',  s:18,  text:'Step 1/6 : FROM node:20-alpine'},
+    {t:'out',  s:18,  text:'Step 3/6 : COPY package*.json ./'},
+    {t:'out',  s:18,  text:'Step 5/6 : RUN npm ci --only=production'},
+    {t:'out',  s:18,  text:'Step 6/6 : CMD ["node","dist/index.js"]'},
+    {t:'suc',  s:22,  text:'Successfully built d3f9a712c8b1'},
+    {t:'cmd',  s:38,  text:'$ docker run -p 3000:3000 titan-app'},
+    {t:'suc',  s:22,  text:'Server listening on http://0.0.0.0:3000 ✓'},
+  ],
+];
+
+let pIdx=0, lIdx=0, cIdx=0;
+const termBody = document.getElementById('term-body');
+let activeEl = null;
+
+function flashKey(ch){
+  if(!ch) return;
+  const sel = `[data-key="${ch.toUpperCase()}"]`;
+  const k = document.querySelector(sel);
+  if(k){ k.classList.add('active'); setTimeout(()=>k.classList.remove('active'), 100); }
+}
+
+function termTick(){
+  const prog = termPrograms[pIdx];
+  const entry = prog[lIdx];
+
+  if(cIdx === 0){
+    activeEl = document.createElement('div');
+    activeEl.className = 'term-line ' + entry.t;
+    const cur = document.createElement('span');
+    cur.className = 'term-cursor';
+    activeEl.appendChild(cur);
+    termBody.appendChild(activeEl);
+    while(termBody.children.length > 14) termBody.removeChild(termBody.firstChild);
+    termBody.scrollTop = termBody.scrollHeight;
+  }
+
+  if(cIdx < entry.text.length){
+    const cur = activeEl.querySelector('.term-cursor');
+    activeEl.insertBefore(document.createTextNode(entry.text[cIdx]), cur);
+    flashKey(entry.text[cIdx]);
+    cIdx++;
+    termBody.scrollTop = termBody.scrollHeight;
+    setTimeout(termTick, entry.s + Math.random()*18);
+  } else {
+    const cur = activeEl.querySelector('.term-cursor');
+    if(cur) cur.remove();
+    cIdx = 0; lIdx++;
+    if(lIdx >= prog.length){
+      lIdx = 0; pIdx = (pIdx+1) % termPrograms.length;
+      const gap = document.createElement('div');
+      gap.className = 'term-line out'; gap.textContent = '';
+      termBody.appendChild(gap);
+      setTimeout(termTick, 2200);
+    } else {
+      setTimeout(termTick, entry.t==='cmd' ? 380 : 60);
+    }
+  }
+}
+setTimeout(termTick, 600);
+
+/* ── HARDWARE STATS ANIMATION ───────────────────────────────────────── */
+(function animHwStats(){
+  const stats = [
+    { min:55, max:96, cur:78 },   // hero CPU
+    { min:75, max:99, cur:94 },   // hero GPU
+    { min:50, max:78, cur:62 },   // hero RAM
+    { min:25, max:65, cur:45 },   // hero NET
+    { min:30, max:60, cur:45 },   // about SRV
+    { min:55, max:85, cur:72 },   // about API
+    { min:25, max:55, cur:38 },   // about DB
+    { min:65, max:92, cur:82 },   // about CDN
+  ];
+  const fills = document.querySelectorAll('.hw-stat-fill');
+  const vals  = document.querySelectorAll('.hw-stat-val');
+  if(!fills.length) return;
+  setInterval(() => {
+    stats.forEach((s, i) => {
+      s.cur = Math.max(s.min, Math.min(s.max, s.cur + (Math.random()-.5)*10));
+      const pct = Math.round(s.cur);
+      if(fills[i]) fills[i].style.width = pct+'%';
+      if(vals[i])  vals[i].textContent  = pct+'%';
+    });
+  }, 1600);
+})();
+
+/* ── HERO MOUSE PARALLAX (laptop + left hw panel) ───────────────────── */
+const heroLaptop = document.getElementById('hero-laptop');
+const heroHw     = document.getElementById('hero-hw');
+if(heroLaptop || heroHw){
+  const BASE_RY=-30, BASE_RX=10, BASE_RZ=-8;
+  const BASE_HW_RY=30, BASE_HW_RX=10, BASE_HW_RZ=8;
+  document.addEventListener('mousemove', e => {
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    const dx = (e.clientX - cx) / cx;
+    const dy = (e.clientY - cy) / cy;
+    if(heroLaptop)
+      heroLaptop.style.transform =
+        `perspective(900px) rotateY(${BASE_RY + dx*4}deg) rotateX(${BASE_RX - dy*3}deg) rotateZ(${BASE_RZ}deg)`;
+    if(heroHw)
+      heroHw.style.transform =
+        `perspective(900px) rotateY(${BASE_HW_RY - dx*4}deg) rotateX(${BASE_HW_RX + dy*3}deg) rotateZ(${BASE_HW_RZ}deg)`;
+  });
+  document.addEventListener('mouseleave', () => {
+    if(heroLaptop)
+      heroLaptop.style.transform =
+        `perspective(900px) rotateY(${BASE_RY}deg) rotateX(${BASE_RX}deg) rotateZ(${BASE_RZ}deg)`;
+    if(heroHw)
+      heroHw.style.transform =
+        `perspective(900px) rotateY(${BASE_HW_RY}deg) rotateX(${BASE_HW_RX}deg) rotateZ(${BASE_HW_RZ}deg)`;
+  });
+}
+
+/* ── ABOUT HARDWARE MOUSE PARALLAX ─────────────────────────────────── */
+const aboutHw = document.getElementById('about-hw');
+if(aboutHw){
+  const BASE_RY_A=-8, BASE_RX_A=4, BASE_RZ_A=-2;
+  document.addEventListener('mousemove', e => {
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    const dx = (e.clientX - cx) / cx;
+    const dy = (e.clientY - cy) / cy;
+    aboutHw.style.transform =
+      `perspective(900px) rotateY(${BASE_RY_A + dx*5}deg) rotateX(${BASE_RX_A - dy*4}deg) rotateZ(${BASE_RZ_A}deg)`;
+  });
+  document.addEventListener('mouseleave', () => {
+    aboutHw.style.transform =
+      `perspective(900px) rotateY(${BASE_RY_A}deg) rotateX(${BASE_RX_A}deg) rotateZ(${BASE_RZ_A}deg)`;
+  });
+}
+</script>
+</body>
+</html>
