@@ -15,7 +15,7 @@
     --text:#E8F5E9; --muted:#6B9E7A; --border:rgba(0,200,83,.18);
     --radius:14px; --card-bg:rgba(10,26,14,.75);
   }
-  html { scroll-behavior:smooth; font-size:16px; }
+  html { scroll-behavior:smooth; font-size:16px; overflow-x:hidden; }
   body {
     background:var(--g0); color:var(--text);
     font-family:'Segoe UI',system-ui,sans-serif;
@@ -50,7 +50,7 @@
 
   /* ── NAV ───────────────────────────────────────────────── */
   nav {
-    position:fixed; top:0; left:0; right:0; z-index:100;
+    position:fixed; top:0; left:0; right:0; z-index:400;
     padding:1rem 2rem;
     display:flex; align-items:center; justify-content:space-between;
     backdrop-filter:blur(20px) saturate(1.4);
@@ -61,8 +61,39 @@
   nav.scrolled { padding:.6rem 2rem; }
   .nav-logo {
     display:flex; align-items:center; gap:.6rem;
-    font-size:1.35rem; font-weight:800; letter-spacing:.04em;
-    color:var(--green); text-decoration:none;
+    font-size:1.62rem; font-weight:900; letter-spacing:-.02em;
+    color:#fff; text-decoration:none;
+  }
+  .nav-glitch { position:relative; }
+  .nav-glitch .logo-green { color:var(--green); }
+  .nav-glitch::before, .nav-glitch::after {
+    content:attr(data-text); position:absolute; inset:0;
+    pointer-events:none; white-space:nowrap;
+    font-weight:900; letter-spacing:-.02em;
+  }
+  .nav-glitch::before {
+    animation:nav-glitch1 3s infinite;
+    clip-path:polygon(0 0,100% 0,100% 40%,0 40%);
+    transform:translate(-1.5px,0);
+    color:var(--green-l); opacity:.8;
+  }
+  .nav-glitch::after {
+    animation:nav-glitch2 3s infinite;
+    clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);
+    transform:translate(1.5px,0);
+    color:var(--green); opacity:.7;
+  }
+  @keyframes nav-glitch1 {
+    0%,94%,100%{transform:translate(-1.5px,0) skew(0);}
+    95%{transform:translate(-3px,-1px) skew(1deg);}
+    96%{transform:translate(2px,.5px) skew(-.5deg);}
+    97%{transform:translate(-1.5px,0);}
+  }
+  @keyframes nav-glitch2 {
+    0%,94%,100%{transform:translate(1.5px,0) skew(0);}
+    95%{transform:translate(3px,1px) skew(-1deg);}
+    96%{transform:translate(-2px,-.5px) skew(.5deg);}
+    97%{transform:translate(1.5px,0);}
   }
   .nav-logo .logo-icon {
     width:36px; height:36px;
@@ -1084,12 +1115,18 @@
     position:relative; overflow:hidden;
   }
   .team-photo::after {
-    content:''; position:absolute; inset:0;
+    content:''; position:absolute; inset:0; z-index:2;
     background:linear-gradient(to bottom, transparent 55%, rgba(5,13,8,.92) 100%);
   }
+  .team-headshot {
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; object-position:center top;
+    z-index:1;
+  }
+  .team-headshot[src=""], .team-headshot:not([src]) { display:none; }
   .team-initials {
     font-size:3.6rem; font-weight:900; color:rgba(0,200,83,.35);
-    letter-spacing:-.04em; user-select:none; position:relative; z-index:1;
+    letter-spacing:-.04em; user-select:none; position:relative; z-index:0;
     text-shadow:0 0 40px rgba(0,200,83,.2);
     font-family:'SF Mono','Fira Code',monospace;
   }
@@ -1130,53 +1167,225 @@
   }
 
   /* ── RESPONSIVE ─────────────────────────────────────────── */
+
+  /* Large tablet — hide laptop graphic, reduce hero clutter */
   @media(max-width:1200px) {
     .hero-laptop { width:min(420px,36vw); }
     .hero-hw-wrap { width:min(360px,30vw); }
   }
   @media(max-width:960px) {
     .hero-laptop-wrap,.hero-hw-wrap { display:none; }
+    section { padding:4.5rem 1.5rem; }
+    .tracks-deck-section { padding:2.5rem 1.5rem 2rem; min-height:480px; }
   }
+
+  /* ── TABLET (iPad) ≤768px ──────────────────────────────── */
   @media(max-width:768px) {
-    .nav-links,.nav-cta { display:none; }
+    /* Base */
+    section { padding:4rem 1.25rem; }
+    .container { padding:0 .25rem; }
+
+    /* Nav — drawer from right */
+    .nav-cta { display:none; }
+    nav { padding:.75rem 1.25rem; width:100%; box-sizing:border-box; }
+    /* Drawer — slides in from right, sits below the navbar */
+    .nav-links {
+      flex-direction:column; list-style:none;
+      position:fixed; top:0; right:0;
+      width:65vw; max-width:320px; height:100vh;
+      background:rgba(4,10,6,.97);
+      backdrop-filter:blur(28px) saturate(1.5);
+      border-left:1px solid rgba(0,200,83,.16);
+      padding:5.5rem 1.75rem 2.5rem;
+      gap:0; z-index:350;
+      transform:translateX(100%);
+      transition:transform .38s cubic-bezier(.25,.46,.45,.94);
+      overflow-y:auto; overflow-x:hidden;
+      box-shadow:none;
+    }
     .nav-links.open {
-      display:flex; flex-direction:column;
-      position:fixed; inset:0; top:60px;
-      background:rgba(5,13,7,.97); padding:2rem;
-      gap:2rem; z-index:99;
+      transform:translateX(0);
+      box-shadow:-12px 0 48px rgba(0,0,0,.7), 0 0 0 1px rgba(0,200,83,.1);
     }
+    .nav-links li { border-bottom:1px solid rgba(0,200,83,.07); }
+    .nav-links li a {
+      display:block; font-size:1.05rem; font-weight:600;
+      padding:.95rem .25rem; color:var(--text); letter-spacing:.04em;
+      transition:color .2s, padding-left .2s;
+    }
+    .nav-links li a:hover { color:var(--green); padding-left:.5rem; }
+    .drawer-cta-wrap { border-bottom:none !important; margin-top:1.5rem; }
+    .nav-cta-mobile { display:none; }
     .nav-links.open .nav-cta-mobile {
-      display:inline-flex; align-items:center; gap:.5rem;
-      background:var(--green); color:#000; border-radius:8px;
-      padding:.65rem 1.4rem; font-weight:700; font-size:.95rem;
-      text-decoration:none; letter-spacing:.04em; width:fit-content;
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      background:linear-gradient(135deg,var(--green),#00A844);
+      color:#000; border-radius:9px; width:100%;
+      padding:.8rem 1.4rem; font-weight:800; font-size:.95rem;
+      text-decoration:none; letter-spacing:.04em;
     }
+    /* Overlay — dark tint behind drawer, above content */
+    .nav-overlay {
+      position:fixed; inset:0; z-index:200;
+      background:rgba(0,0,0,.45);
+      opacity:0; pointer-events:none;
+      transition:opacity .38s;
+    }
+    .nav-overlay.open { opacity:1; pointer-events:auto; }
+    /* Content blur when drawer is open */
+    body.drawer-open section,
+    body.drawer-open footer,
+    body.drawer-open #particles {
+      filter:blur(5px) brightness(.7);
+      transition:filter .38s;
+    }
+    section, footer, #particles { transition:filter .38s; }
+    /* Burger — stays inside the navbar which is z-index:400 */
     .burger { display:flex; }
     .burger span { transition:transform .3s, opacity .3s; }
     .burger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
     .burger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
     .burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
-    .about-grid { grid-template-columns:1fr; }
-    .stats-grid { grid-template-columns:1fr 1fr; }
-.footer-grid { grid-template-columns:1fr 1fr; gap:2rem; }
-.tl-item { grid-template-columns:80px 1fr; gap:1rem; }
-    #faq .container { grid-template-columns:1fr !important; }
-    .keynote-card { flex-direction:column; text-align:center; }
-    .team-card { width:min(150px,calc(33% - 1rem)); }
+
+    /* Hero */
+    #hero { padding:5.5rem 1.25rem 3.5rem; }
+    .hero-content { padding:0 1rem; }
+    .hero-badge { font-size:.72rem; padding:.3rem .85rem; }
+    .hero-date { flex-wrap:wrap; font-size:.82rem; justify-content:center; text-align:center; gap:.4rem; }
+    .hero-btns { flex-wrap:wrap; justify-content:center; gap:.75rem; }
+    .btn-primary, .btn-outline { width:100%; max-width:280px; justify-content:center; }
+    .countdown { gap:.7rem; }
+
+    /* About */
+    .about-grid { grid-template-columns:1fr; gap:2.5rem; }
+    .stats-grid { grid-template-columns:1fr 1fr; gap:1rem; }
+
+    /* Tracks grid */
+    .tracks-grid { grid-template-columns:1fr 1fr; gap:1rem; }
+
+    /* Track deck */
+    .tracks-deck-section { flex-direction:column; gap:2rem; padding:2.5rem 1.25rem 2rem; min-height:auto; }
+    .tracks-deck { width:min(310px,88vw); height:390px; }
+    .track-deck-card { padding:1.75rem 1.5rem; }
+
+    /* Challenge carousel */
+    .chal-scene { padding:4rem 0 3.5rem; }
+    .chal-card { width:min(290px,80vw); }
+    .chal-card[data-pos="-1"] { transform:translateX(calc(-50% - 220px)) translateY(-50%) scale(.78); }
+    .chal-card[data-pos="1"]  { transform:translateX(calc(-50% + 220px)) translateY(-50%) scale(.78); }
     .chal-bracket { display:none; }
+
+    /* Schedule */
+    .tl-item { grid-template-columns:72px 1fr; gap:.75rem; }
+
+    /* Keynote */
+    .keynote-grid { gap:1.25rem; }
+    .keynote-card { flex-direction:column; text-align:center; padding:1.75rem 1.5rem; }
+    .keynote-avatar { margin:0 auto; }
+
+    /* Team — mobile grid (JS populates & shows this) */
+    .team-scene { padding:3.5rem 0 4rem; }
+    .team-mobile-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1.1rem;
+      padding:2rem 1.25rem 2.5rem;
+      max-width:480px;
+      margin:0 auto;
+    }
+    .team-mobile-grid .team-card {
+      width:100% !important;
+      min-width:0;
+      animation:none !important;
+      transform:none !important;
+    }
+    .team-mobile-grid .team-photo { height:155px; }
+    .team-mobile-grid .team-initials { font-size:3rem; }
+    /* First pair — originally the 3rd (featured) cards — subtle highlight */
+    .team-mobile-grid .team-card:nth-child(1),
+    .team-mobile-grid .team-card:nth-child(2) {
+      border-color:rgba(0,200,83,.32);
+      box-shadow:0 0 22px rgba(0,200,83,.09);
+    }
+    .team-mobile-grid .team-card:nth-child(1) .team-photo,
+    .team-mobile-grid .team-card:nth-child(2) .team-photo { height:175px; }
+    .team-mobile-grid .team-card:nth-child(1) .team-initials,
+    .team-mobile-grid .team-card:nth-child(2) .team-initials { font-size:3.5rem; }
+
+    /* Advisors */
+    .advisors-flex { gap:1rem; }
+    .advisor-card { width:100%; max-width:520px; }
+
+    /* Sponsor */
+    .sponsor-inner { grid-template-columns:1fr; gap:2rem; padding:2.5rem 1.5rem; }
+
+    /* FAQ */
+    #faq .container { grid-template-columns:1fr !important; gap:2rem; }
+
+    /* Footer */
+    .footer-grid { grid-template-columns:1fr 1fr; gap:1.75rem; }
   }
+
+  /* ── MOBILE (iPhone) ≤480px ────────────────────────────── */
   @media(max-width:480px) {
-    .countdown { gap:.5rem; }
-    .cd-box { padding:.55rem .8rem; }
-    .cd-num { font-size:1.9rem; }
-    .cd-sep { font-size:1.6rem; }
-    .footer-grid { grid-template-columns:1fr; }
+    /* Base */
+    section { padding:3.5rem 1rem; }
+    .section-title { font-size:clamp(1.6rem,7vw,2.4rem); }
+    .nav-logo { font-size:1.32rem; }
+
+    /* Hero */
+    #hero { padding:5rem 1rem 3rem; }
+    .hero-content { padding:0 .5rem; }
     .hero-btns { flex-direction:column; align-items:center; }
-    .section-title { font-size:clamp(1.6rem,5vw,2.5rem); }
-    .keynote-card { flex-direction:column; text-align:center; }
-    .team-card { width:min(150px,calc(33% - 1rem)); }
-    .timeline-tabs { flex-direction:column; gap:.5rem; }
-    .nav-logo { font-size:1.1rem; }
+    .btn-primary, .btn-outline { width:100%; max-width:260px; }
+    .countdown { gap:.4rem; }
+    .cd-box { padding:.5rem .65rem; }
+    .cd-num { font-size:1.75rem; }
+    .cd-sep { font-size:1.5rem; margin-bottom:1rem; }
+    .cd-lbl { font-size:.55rem; }
+
+    /* Tracks */
+    .tracks-grid { grid-template-columns:1fr; }
+    .tracks-deck { width:90vw; height:370px; }
+
+    /* Challenge carousel */
+    .chal-viewport { height:290px; }
+    .chal-card { width:82vw; min-height:260px; padding:1.5rem; }
+    .chal-card[data-pos="-1"] { transform:translateX(calc(-50% - 88vw)) translateY(-50%) scale(.75); opacity:0; }
+    .chal-card[data-pos="1"]  { transform:translateX(calc(-50% + 88vw)) translateY(-50%) scale(.75); opacity:0; }
+    .chal-card[data-pos="-2"], .chal-card[data-pos="2"] { opacity:0; }
+
+    /* Schedule */
+    .timeline-tabs { flex-wrap:wrap; gap:.5rem; }
+    .tab-btn { padding:.5rem 1rem; font-size:.82rem; }
+    .tl-item { grid-template-columns:60px 1fr; gap:.5rem; }
+    .tl-time { font-size:.78rem; }
+
+    /* Team */
+    .team-mobile-grid { gap:.85rem; padding:1.5rem 1rem 2rem; }
+
+    /* Advisors */
+    .advisor-card { flex-direction:column; text-align:center; padding:1.25rem 1rem; }
+    .advisor-body { display:flex; flex-direction:column; align-items:center; }
+    .advisor-role-tag { align-self:center; }
+
+    /* Sponsor */
+    .sponsor-inner { padding:2rem 1.25rem; }
+
+    /* Footer */
+    .footer-grid { grid-template-columns:1fr; gap:1.5rem; }
+    .social-row { justify-content:center; }
+  }
+
+  /* ── SMALL PHONE ≤390px ─────────────────────────────────── */
+  @media(max-width:390px) {
+    .nav-logo { font-size:1.15rem; }
+    .logo-icon { width:30px; height:30px; }
+    .cd-num { font-size:1.55rem; }
+    .cd-box { padding:.4rem .55rem; }
+    .chal-card { width:88vw; }
+    .team-card { width:calc(48% - .5rem); }
+    .team-wave-row .team-card:nth-child(3) { width:calc(48% - .5rem); }
+    .btn-primary, .btn-outline { font-size:.9rem; padding:.7rem 1.5rem; }
   }
 </style>
 </head>
@@ -1198,10 +1407,7 @@
 <!-- ═══════════════════════════════ NAV ══════════════════════════════ -->
 <nav id="navbar">
   <a href="#hero" class="nav-logo">
-    <div class="logo-icon">
-      <i data-lucide="zap" width="20" height="20" color="#000"></i>
-    </div>
-    HackTitan
+    <span class="nav-glitch" data-text="HackTitan">Hack<span class="logo-green">Titan</span></span>
   </a>
   <ul class="nav-links" id="nav-links">
     <li><a href="#about">About</a></li>
@@ -1210,12 +1416,14 @@
     <li><a href="#organizers">Team</a></li>
     <li><a href="#sponsor">Sponsor</a></li>
     <li><a href="#faq">FAQ</a></li>
+    <li class="drawer-cta-wrap"><a href="#sponsor" class="nav-cta-mobile">Partner With Us</a></li>
   </ul>
   <a href="#sponsor" class="nav-cta">Partner With Us</a>
   <div class="burger" id="burger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
 </nav>
+<div class="nav-overlay" id="nav-overlay" onclick="toggleMenu()"></div>
 
 <!-- ═══════════════════════════════ HERO ═════════════════════════════ -->
 <section id="hero">
@@ -1827,6 +2035,7 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#051a0c,#0d3318);">
+            <img class="team-headshot" src="" alt="Team Member" />
             <div class="team-initials">HT</div>
           </div>
           <div class="team-info">
@@ -1838,6 +2047,7 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
           <div class="team-photo" style="background:linear-gradient(160deg,#071a10,#0a2e18);">
+            <img class="team-headshot" src="" alt="Zhansen Shingis" />
             <div class="team-initials">ZS</div>
           </div>
           <div class="team-info">
@@ -1849,6 +2059,7 @@
 
         <a href="https://linkedin.com/in/hiratrahi" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#04180e,#0b2e1a);">
+            <img class="team-headshot" src="hirat.PNG" alt="Hirat Rahman Rahi" />
             <div class="team-initials">HR</div>
           </div>
           <div class="team-info">
@@ -1860,6 +2071,7 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
           <div class="team-photo" style="background:linear-gradient(160deg,#061a0d,#082e16);">
+            <img class="team-headshot" src="" alt="Yohance Williams" />
             <div class="team-initials">YW</div>
           </div>
           <div class="team-info">
@@ -1871,6 +2083,7 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#051a0c,#0c3319);">
+            <img class="team-headshot" src="" alt="Team Member" />
             <div class="team-initials">MC</div>
           </div>
           <div class="team-info">
@@ -1887,6 +2100,7 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#04180f,#0a2d18);">
+            <img class="team-headshot" src="" alt="Team Member" />
             <div class="team-initials">YW</div>
           </div>
           <div class="team-info">
@@ -1898,6 +2112,7 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
           <div class="team-photo" style="background:linear-gradient(160deg,#061a0d,#0c3319);">
+            <img class="team-headshot" src="" alt="Rokin Prottoy" />
             <div class="team-initials">RP</div>
           </div>
           <div class="team-info">
@@ -1909,6 +2124,7 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#051a0c,#0d3318);">
+            <img class="team-headshot" src="ethan.png" alt="Ethan Godsey" />
             <div class="team-initials">EG</div>
           </div>
           <div class="team-info">
@@ -1920,10 +2136,11 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
           <div class="team-photo" style="background:linear-gradient(160deg,#071a10,#0a2e18);">
+            <img class="team-headshot" src="" alt="Elijah Kolawole" />
             <div class="team-initials">EK</div>
           </div>
           <div class="team-info">
-            <h4>Elijah Kolawolw</h4>
+            <h4>Elijah Kolawole</h4>
             <div class="team-major">Computer Science</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
@@ -1931,6 +2148,7 @@
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#04180e,#0b2e1a);">
+            <img class="team-headshot" src="" alt="Team Member" />
             <div class="team-initials">TM</div>
           </div>
           <div class="team-info">
@@ -2102,8 +2320,7 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <div class="nav-logo" style="margin-bottom:.75rem">
-        <div class="logo-icon"><i data-lucide="zap" width="20" height="20" color="#000"></i></div>
-        HackTitan 2027
+        <span class="nav-glitch" data-text="HackTitan 2027">Hack<span class="logo-green">Titan</span> 2027</span>
       </div>
       <p>Built by hackers, for hackers. Illinois Wesleyan University's flagship hackathon. 24 hours to build the future.</p>
       <div class="social-row">
@@ -2319,10 +2536,23 @@ function toggleFaq(btn){
   lucide.createIcons();
 }
 
-/* ── MOBILE MENU ───────────────────────────────────────────────────── */
+/* ── MOBILE MENU (right drawer) ────────────────────────────────────── */
 function toggleMenu(){
-  document.getElementById('nav-links').classList.toggle('open');
-  document.getElementById('burger').classList.toggle('open');
+  const nav     = document.getElementById('nav-links');
+  const burger  = document.getElementById('burger');
+  const overlay = document.getElementById('nav-overlay');
+  const isOpen  = nav.classList.toggle('open');
+  burger.classList.toggle('open', isOpen);
+  overlay.classList.toggle('open', isOpen);
+  document.body.classList.toggle('drawer-open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeMenu(){
+  document.getElementById('nav-links').classList.remove('open');
+  document.getElementById('burger').classList.remove('open');
+  document.getElementById('nav-overlay').classList.remove('open');
+  document.body.classList.remove('drawer-open');
+  document.body.style.overflow = '';
 }
 
 
@@ -2331,7 +2561,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
     const t=document.querySelector(a.getAttribute('href'));
     if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
-    document.getElementById('nav-links').classList.remove('open');
+    closeMenu();
   });
 });
 
@@ -2767,6 +2997,58 @@ if(heroLaptop || heroHw){
     ].join(';');
     scene.appendChild(s);
   }
+})();
+
+/* ── TEAM MOBILE GRID REORDER ───────────────────────────────────────── */
+(function initTeamMobileLayout(){
+  const scene = document.getElementById('teamScene');
+  if(!scene) return;
+  const rows = scene.querySelectorAll('.team-wave-row');
+  if(rows.length < 2) return;
+
+  const r1 = Array.from(rows[0].querySelectorAll('.team-card'));
+  const r2 = Array.from(rows[1].querySelectorAll('.team-card'));
+
+  // Mobile order: 3rd of each row first, then the rest
+  const mobileOrder = [
+    r1[2], r2[2],           // row 1 mobile — featured cards
+    r1[0], r1[1],           // row 2 mobile
+    r1[3], r1[4],           // row 3 mobile
+    r2[0], r2[1],           // row 4 mobile
+    r2[3], r2[4],           // row 5 mobile
+  ].filter(Boolean);
+
+  const grid = document.createElement('div');
+  grid.className = 'team-mobile-grid';
+  grid.style.display = 'none';
+  rows[0].before(grid);
+
+  function toMobile(){
+    mobileOrder.forEach(c => grid.appendChild(c));
+    rows[0].style.display = 'none';
+    rows[1].style.display = 'none';
+    grid.style.display = 'grid';
+  }
+
+  function toDesktop(){
+    r1.forEach(c => rows[0].appendChild(c));
+    r2.forEach(c => rows[1].appendChild(c));
+    rows[0].style.display = '';
+    rows[1].style.display = '';
+    grid.style.display = 'none';
+  }
+
+  let mobile = window.innerWidth <= 768;
+  mobile ? toMobile() : toDesktop();
+
+  let t;
+  window.addEventListener('resize', () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const now = window.innerWidth <= 768;
+      if(now !== mobile){ mobile = now; mobile ? toMobile() : toDesktop(); }
+    }, 100);
+  });
 })();
 
 /* ── ABOUT HARDWARE MOUSE PARALLAX ─────────────────────────────────── */
