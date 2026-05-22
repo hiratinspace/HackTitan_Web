@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HackTitan 2027 — Build the Future</title>
+<title>HackTitan 2027 - Build the Future</title>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
   /* ── RESET & VARIABLES ─────────────────────────────────── */
@@ -390,6 +390,13 @@
     text-transform:uppercase; font-family:'SF Mono','Fira Code',monospace;
     border:1px solid rgba(0,200,83,.28); border-radius:5px; padding:.22rem .55rem;
   }
+  .track-prize-row { display:flex; align-items:center; justify-content:space-between; margin-top:1.1rem; }
+  .track-prize-badge {
+    display:inline-flex; align-items:center; gap:.38rem;
+    background:rgba(0,200,83,.09); border:1px solid rgba(0,200,83,.22);
+    border-radius:999px; padding:.22rem .8rem;
+    font-size:.74rem; color:var(--green-l); font-weight:700;
+  }
   .deck-nav { position:relative; z-index:2; display:flex; align-items:center; gap:.75rem; margin-top:2rem; }
   .deck-dot {
     width:7px; height:7px; border-radius:50%; cursor:pointer;
@@ -399,114 +406,131 @@
   .deck-hint { position:relative; z-index:2; color:var(--muted); font-size:.73rem; letter-spacing:.07em; margin-top:.65rem; display:flex; align-items:center; gap:.35rem; }
   @media(max-width:600px){ .tracks-deck{ height:400px; } .track-deck-card{ padding:1.75rem 1.5rem; } }
 
-  /* ── PRIZES ────────────────────────────────────────────── */
-  #prizes { background:linear-gradient(180deg,var(--g1) 0%,var(--g0) 100%); }
-  .prizes-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem; }
-  .prize-card {
-    background:var(--card-bg); border:1px solid var(--border);
-    border-radius:var(--radius); padding:2.5rem 2rem; text-align:center;
-    transition:all .3s; position:relative; overflow:hidden;
-    backdrop-filter:blur(10px);
-    transform-style:preserve-3d; will-change:transform;
-  }
-  .prize-card.featured {
-    border-color:var(--green);
-    box-shadow:0 8px 32px rgba(0,0,0,.4);
-    transform:scale(1.04);
-  }
-  .prize-rank {
-    font-size:.7rem; letter-spacing:.2em; color:var(--muted);
-    text-transform:uppercase; margin-bottom:.5rem;
-  }
-  .prize-medal {
-    font-size:3rem; margin-bottom:.75rem;
-  }
-  .prize-amount {
-    font-size:2.8rem; font-weight:900;
-    background:linear-gradient(135deg,var(--green),var(--green-l));
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    background-clip:text; line-height:1;
-  }
-  .prize-title { font-size:1.15rem; font-weight:700; margin:.5rem 0 .75rem; }
-  .prize-perks { list-style:none; text-align:left; }
-  .prize-perks li {
-    display:flex; align-items:center; gap:.5rem;
-    color:var(--muted); font-size:.85rem; padding:.35rem 0;
-    border-bottom:1px solid var(--border);
-  }
-  .prize-perks li:last-child { border:none; }
-  .prize-perks li svg { color:var(--green); flex-shrink:0; }
-  .special-prizes { margin-top:3rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,300px)); gap:1rem; justify-content:center; }
-  .special-card {
-    background:var(--card-bg); border:1px solid var(--border);
-    border-radius:12px; padding:1.25rem; display:flex; align-items:center; gap:1rem;
-    transition:all .25s;
-  }
-  .special-card:hover { border-color:var(--green); transform:translateY(-3px); }
-  .special-icon { color:var(--green); flex-shrink:0; }
-  .special-card strong { display:block; font-size:.9rem; }
-  .special-card span { color:var(--muted); font-size:.8rem; }
 
   /* ── COMPANY CHALLENGES ────────────────────────────────── */
-  #challenges { background:var(--g0); }
-  .challenges-grid {
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,340px));
-    gap:1.5rem; margin-top:3rem; justify-content:center;
+  #challenges { background:transparent; padding:0; }
+  .chal-scene {
+    position:relative; overflow:hidden;
+    padding:5rem 0 4.5rem;
+    background:linear-gradient(180deg,#040d0a 0%,#020c11 55%,#040d0a 100%);
   }
-  .challenge-card {
-    background:var(--card-bg); border:1px solid var(--border);
-    border-radius:var(--radius); padding:1.75rem;
-    transition:all .3s; cursor:none; position:relative; overflow:hidden;
-    backdrop-filter:blur(10px);
+  .chal-bg-grid {
+    position:absolute; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      linear-gradient(rgba(0,200,83,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,83,.05) 1px, transparent 1px);
+    background-size:52px 52px;
+    mask-image:radial-gradient(ellipse 90% 75% at 50% 50%, black 20%, transparent 100%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 75% at 50% 50%, black 20%, transparent 100%);
   }
-  .challenge-card::before {
-    content:''; position:absolute; inset:0;
-    background:linear-gradient(135deg,rgba(0,200,83,.04),transparent);
-    opacity:0; transition:opacity .3s;
+  @keyframes chal-scan { 0%{transform:translateY(0)} 100%{transform:translateY(600px)} }
+  .chal-bg-scan {
+    position:absolute; left:0; right:0; height:2px; top:-2px; pointer-events:none; z-index:0;
+    background:linear-gradient(90deg, transparent 0%, rgba(0,200,83,.1) 25%, rgba(0,200,83,.35) 50%, rgba(0,200,83,.1) 75%, transparent 100%);
+    animation:chal-scan 8s linear infinite;
+    filter:blur(1px);
   }
-  .challenge-card:hover { border-color:var(--green); transform:translateY(-5px); box-shadow:0 20px 40px rgba(0,0,0,.5); }
-  .challenge-card:hover::before { opacity:1; }
-  .challenge-header { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
-  .company-badge {
-    width:46px; height:46px; border-radius:10px; flex-shrink:0;
+  @keyframes chal-bp { 0%,100%{opacity:.2} 50%{opacity:.55} }
+  .chal-bracket {
+    position:absolute; width:70px; height:70px; pointer-events:none; z-index:0;
+    animation:chal-bp 4s ease-in-out infinite;
+  }
+  .chal-bracket.tl { top:2.5rem; left:2.5rem; border-top:1.5px solid rgba(0,200,83,.55); border-left:1.5px solid rgba(0,200,83,.55); }
+  .chal-bracket.tr { top:2.5rem; right:2.5rem; border-top:1.5px solid rgba(0,200,83,.55); border-right:1.5px solid rgba(0,200,83,.55); animation-delay:.9s; }
+  .chal-bracket.bl { bottom:2.5rem; left:2.5rem; border-bottom:1.5px solid rgba(0,200,83,.55); border-left:1.5px solid rgba(0,200,83,.55); animation-delay:1.8s; }
+  .chal-bracket.br { bottom:2.5rem; right:2.5rem; border-bottom:1.5px solid rgba(0,200,83,.55); border-right:1.5px solid rgba(0,200,83,.55); animation-delay:2.7s; }
+  /* Carousel */
+  .chal-carousel { margin-top:3rem; display:flex; flex-direction:column; align-items:center; gap:1.75rem; }
+  .chal-row { display:flex; align-items:center; gap:1rem; width:100%; max-width:1020px; }
+  .chal-viewport {
+    flex:1; overflow:hidden; position:relative; height:340px;
+    mask-image:linear-gradient(90deg, transparent 0%, black 16%, black 84%, transparent 100%);
+    -webkit-mask-image:linear-gradient(90deg, transparent 0%, black 16%, black 84%, transparent 100%);
+  }
+  .chal-track { position:relative; width:100%; height:100%; }
+  .chal-card {
+    position:absolute; width:min(330px, 72vw);
+    left:50%; top:50%;
+    border-radius:20px; padding:1.9rem 1.7rem;
+    backdrop-filter:blur(20px);
+    cursor:pointer; user-select:none;
+    background:rgba(4,12,8,.95);
+    border:1px solid rgba(0,200,83,.15);
+    transition:transform .52s cubic-bezier(.25,.46,.45,.94), filter .52s ease, opacity .44s ease, border-color .4s ease, box-shadow .4s ease;
+    will-change:transform,filter;
+    display:flex; flex-direction:column;
+  }
+  .chal-card[data-pos="0"] {
+    transform:translateX(-50%) translateY(-50%) scale(1);
+    filter:none; z-index:4; opacity:1;
+    border-color:rgba(0,200,83,.42);
+    box-shadow:0 28px 72px rgba(0,0,0,.7), 0 0 0 1px rgba(0,200,83,.2), 0 0 52px rgba(0,200,83,.09);
+    cursor:default;
+  }
+  .chal-card[data-pos="-1"] {
+    transform:translateX(calc(-50% - 285px)) translateY(-50%) scale(.83);
+    filter:blur(4px); z-index:3; opacity:.6;
+  }
+  .chal-card[data-pos="1"] {
+    transform:translateX(calc(-50% + 285px)) translateY(-50%) scale(.83);
+    filter:blur(4px); z-index:3; opacity:.6;
+  }
+  .chal-card[data-pos="-2"] {
+    transform:translateX(calc(-50% - 530px)) translateY(-50%) scale(.65);
+    filter:blur(8px); z-index:2; opacity:.2;
+  }
+  .chal-card[data-pos="2"] {
+    transform:translateX(calc(-50% + 530px)) translateY(-50%) scale(.65);
+    filter:blur(8px); z-index:2; opacity:.2;
+  }
+  .chal-arrow {
+    background:rgba(0,200,83,.07); border:1px solid rgba(0,200,83,.18);
+    border-radius:50%; width:46px; height:46px; flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
-    font-size:.72rem; font-weight:900; letter-spacing:.03em;
-    border:1px solid var(--border);
+    cursor:pointer; color:var(--green); transition:all .25s; z-index:10;
   }
-  .challenge-company { font-size:.75rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
-  .challenge-card h3 { font-size:1rem; font-weight:800; margin-bottom:.45rem; }
-  .challenge-card p { color:var(--muted); font-size:.855rem; line-height:1.6; }
-  .challenge-prize {
-    margin-top:1.1rem; display:inline-flex; align-items:center; gap:.4rem;
-    background:rgba(0,200,83,.09); border:1px solid rgba(0,200,83,.2);
-    border-radius:999px; padding:.25rem .85rem;
-    font-size:.76rem; color:var(--green-l); font-weight:700;
+  .chal-arrow:hover { background:rgba(0,200,83,.18); border-color:rgba(0,200,83,.5); box-shadow:0 0 16px rgba(0,200,83,.18); }
+  .chal-dots { display:flex; gap:.55rem; }
+  .chal-dot { width:7px; height:7px; border-radius:50%; background:rgba(0,200,83,.2); border:1px solid rgba(0,200,83,.3); cursor:pointer; transition:all .3s; }
+  .chal-dot.active { background:var(--green); transform:scale(1.35); box-shadow:0 0 8px rgba(0,200,83,.5); }
+  /* Card internals */
+  .chal-co-header { display:flex; align-items:center; gap:.9rem; margin-bottom:1.25rem; }
+  .chal-co-badge {
+    width:48px; height:48px; border-radius:12px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.68rem; font-weight:900; letter-spacing:.04em;
+  }
+  .chal-co-name { font-size:.72rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:.18rem; }
+  .chal-co-industry { font-size:.82rem; color:rgba(255,255,255,.55); font-weight:500; }
+  .chal-divider { height:1px; background:rgba(255,255,255,.07); margin-bottom:1.25rem; }
+  .chal-lock-block {
+    display:flex; align-items:flex-start; gap:.85rem; flex:1;
+    background:rgba(0,200,83,.04); border:1px solid rgba(0,200,83,.12);
+    border-radius:12px; padding:.95rem 1rem;
+  }
+  .chal-lock-icon {
+    width:36px; height:36px; border-radius:9px; flex-shrink:0;
+    background:rgba(0,200,83,.1); border:1px solid rgba(0,200,83,.22);
+    display:flex; align-items:center; justify-content:center; color:var(--green);
+  }
+  .chal-lock-label { font-size:.75rem; font-weight:800; color:var(--green-l); margin-bottom:.3rem; letter-spacing:.05em; text-transform:uppercase; }
+  .chal-lock-sub { font-size:.74rem; color:var(--muted); line-height:1.55; }
+  .chal-prize-row {
+    margin-top:1.2rem; display:flex; align-items:center; justify-content:space-between;
+  }
+  .chal-prize-badge {
+    display:inline-flex; align-items:center; gap:.4rem;
+    background:rgba(0,200,83,.08); border:1px solid rgba(0,200,83,.18);
+    border-radius:999px; padding:.22rem .8rem;
+    font-size:.73rem; color:var(--green-l); font-weight:700;
+  }
+  .chal-card-num { font-size:.7rem; color:rgba(255,255,255,.18); font-weight:600; }
+  @media(max-width:768px) {
+    .chal-card { width:min(300px,78vw); }
+    .chal-card[data-pos="-1"] { transform:translateX(calc(-50% - 245px)) translateY(-50%) scale(.8); }
+    .chal-card[data-pos="1"]  { transform:translateX(calc(-50% + 245px)) translateY(-50%) scale(.8); }
   }
 
-  /* ── TRACK WINNERS ──────────────────────────────────────── */
-  .grand-prize-wrap { max-width:420px; margin:3rem auto 2.5rem; }
-  .track-winners-label {
-    text-align:center; font-size:.75rem; letter-spacing:.15em;
-    color:var(--muted); text-transform:uppercase; margin-bottom:1.25rem;
-    display:flex; align-items:center; gap:.75rem;
-  }
-  .track-winners-label::before, .track-winners-label::after {
-    content:''; flex:1; height:1px; background:var(--border);
-  }
-  .track-winners-grid {
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,240px)); gap:1.2rem; margin-bottom:2.5rem; justify-content:center;
-  }
-  .track-winner-card {
-    background:var(--card-bg); border:1px solid var(--border);
-    border-radius:var(--radius); padding:1.4rem 1rem; text-align:center;
-    transition:all .3s; cursor:none; backdrop-filter:blur(10px);
-  }
-  .track-winner-card:hover { border-color:var(--green); transform:translateY(-4px); box-shadow:0 16px 36px rgba(0,0,0,.45); }
-  .tw-icon { color:var(--green); margin-bottom:.65rem; }
-  .tw-track { font-size:.68rem; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; margin-bottom:.3rem; }
-  .tw-amount { font-size:1.65rem; font-weight:900; color:var(--green); line-height:1; }
-  .tw-label { font-size:.8rem; font-weight:700; margin-top:.35rem; }
-  @media(max-width:768px) { .track-winners-grid { grid-template-columns:1fr 1fr; } }
 
   /* ── TIMELINE ──────────────────────────────────────────── */
   #schedule { background:var(--g0); }
@@ -544,25 +568,49 @@
   .tl-body strong { display:flex; align-items:center; gap:.5rem; font-size:.95rem; color:var(--green-l); }
   .tl-body p { color:var(--muted); font-size:.83rem; margin-top:.2rem; }
 
-  /* ── MENTORS ───────────────────────────────────────────── */
+  /* ── KEYNOTE SPEAKERS ──────────────────────────────────── */
   #mentors { background:linear-gradient(180deg,var(--g0) 0%,var(--g1) 100%); }
-  .mentors-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,260px)); gap:1.5rem; margin-top:3rem; justify-content:center; }
-  .mentor-card {
-    background:var(--card-bg); border:1px solid var(--border);
-    border-radius:var(--radius); padding:1.5rem; text-align:center;
-    transition:all .3s; cursor:none;
+  .keynote-grid {
+    display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-top:3rem;
   }
-  .mentor-card:hover { border-color:var(--green); transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,.5); }
-  .mentor-avatar {
-    width:70px; height:70px; border-radius:50%; margin:0 auto 1rem;
+  .keynote-card {
+    background:var(--card-bg); border:1px solid var(--border);
+    border-radius:var(--radius); padding:2.25rem 2rem;
+    display:flex; align-items:center; gap:1.75rem;
+    width:min(460px,100%); transition:all .35s; cursor:none;
+    position:relative; overflow:hidden;
+  }
+  .keynote-card::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,rgba(0,200,83,.05),transparent 60%);
+    opacity:0; transition:opacity .3s;
+  }
+  .keynote-card:hover { border-color:var(--green); transform:translateY(-5px); box-shadow:0 20px 50px rgba(0,0,0,.5); }
+  .keynote-card:hover::before { opacity:1; }
+  .keynote-avatar {
+    width:88px; height:88px; border-radius:50%; flex-shrink:0;
     background:linear-gradient(135deg,var(--green-d),var(--green));
     display:flex; align-items:center; justify-content:center;
-    font-size:1.6rem; font-weight:900; color:#000;
-    position:relative; border:2px solid var(--green);
+    font-size:1.9rem; font-weight:900; color:#000;
+    border:2px solid rgba(0,200,83,.5);
+    box-shadow:0 0 24px rgba(0,200,83,.18);
   }
-  .mentor-card h4 { font-size:.95rem; font-weight:700; }
-  .mentor-card p { color:var(--green); font-size:.8rem; margin-top:.2rem; }
-  .mentor-card span { color:var(--muted); font-size:.75rem; }
+  .keynote-info { flex:1; }
+  .keynote-tag {
+    display:inline-block; font-size:.62rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--green); font-family:'SF Mono','Fira Code',monospace;
+    border:1px solid rgba(0,200,83,.28); border-radius:5px; padding:.2rem .5rem; margin-bottom:.6rem;
+  }
+  .keynote-card h4 { font-size:1.15rem; font-weight:800; margin-bottom:.25rem; }
+  .keynote-card .keynote-title { color:var(--green-l); font-size:.85rem; font-weight:600; margin-bottom:.2rem; }
+  .keynote-card .keynote-org { color:var(--muted); font-size:.78rem; }
+  .keynote-linkedin {
+    display:inline-flex; align-items:center; gap:.35rem;
+    margin-top:.75rem; font-size:.75rem; color:var(--muted);
+    border:1px solid var(--border); border-radius:6px; padding:.28rem .65rem;
+    text-decoration:none; transition:all .25s;
+  }
+  .keynote-linkedin:hover { border-color:var(--green); color:var(--green); }
 
   /* ── FAQ ───────────────────────────────────────────────── */
   #faq { background:var(--g1); }
@@ -913,48 +961,172 @@
   .orb1 { width:500px; height:500px; background:radial-gradient(var(--green),transparent); top:-150px; right:-100px; }
   .orb2 { width:350px; height:350px; background:radial-gradient(var(--green-l),transparent); bottom:-100px; left:-80px; }
 
-  /* ── ORGANIZERS & ADVISORS ─────────────────────────────── */
-  #organizers { background:var(--g0); }
-  #advisors   { background:linear-gradient(180deg,var(--g1) 0%,var(--g0) 100%); }
-  .org-grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(170px,210px));
-    gap:1.25rem; margin-top:3rem; justify-content:center;
+  /* ── TEAM PANEL ─────────────────────────────────────────── */
+  #organizers { background:transparent; padding:0; }
+  /* ── FACULTY ADVISORS ──────────────────────────────────── */
+  #advisors { background:linear-gradient(180deg,var(--g1) 0%,var(--g0) 100%); }
+  .advisors-flex {
+    display:flex; gap:1.4rem; justify-content:center;
+    flex-wrap:wrap; margin-top:3rem;
   }
-  .org-card {
-    background:var(--card-bg); border:1px solid var(--border);
-    border-radius:var(--radius); padding:1.5rem 1rem;
-    text-align:center; text-decoration:none; color:var(--text);
-    transition:all .3s; cursor:none; display:block;
-    backdrop-filter:blur(10px); position:relative; overflow:hidden;
+  .advisor-card {
+    display:flex; align-items:center; gap:1.4rem;
+    background:rgba(4,11,7,.88);
+    border:1px solid rgba(0,200,83,.13);
+    border-left:3px solid rgba(0,200,83,.45);
+    border-radius:14px; padding:1.3rem 1.6rem;
+    width:min(380px, 100%);
+    text-decoration:none; color:var(--text);
+    transition:all .32s; cursor:none;
+    position:relative; overflow:hidden;
+    backdrop-filter:blur(14px);
   }
-  .org-card::before {
+  .advisor-card::before {
     content:''; position:absolute; inset:0;
-    background:linear-gradient(135deg,rgba(0,200,83,.06),transparent);
+    background:linear-gradient(90deg, rgba(0,200,83,.045) 0%, transparent 55%);
     opacity:0; transition:opacity .3s;
   }
-  .org-card:hover { border-color:var(--green); transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,.5); }
-  .org-card:hover::before { opacity:1; }
-  .org-avatar {
-    width:56px; height:56px; border-radius:50%;
-    margin:0 auto .9rem;
-    background:linear-gradient(135deg,var(--green-d),var(--green));
+  .advisor-card:hover {
+    border-color:rgba(0,200,83,.42);
+    border-left-color:var(--green);
+    transform:translateY(-4px);
+    box-shadow:0 20px 50px rgba(0,0,0,.55), 0 0 28px rgba(0,200,83,.08);
+  }
+  .advisor-card:hover::before { opacity:1; }
+  .advisor-av {
+    width:64px; height:64px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(135deg,#03121f,#062035);
     display:flex; align-items:center; justify-content:center;
-    font-size:1.1rem; font-weight:900; color:#000;
-    border:2px solid var(--green);
-    box-shadow:0 0 14px rgba(0,200,83,.2);
+    font-size:1.05rem; font-weight:900; letter-spacing:.04em;
+    color:rgba(90,165,255,.75);
+    border:2px solid rgba(60,130,220,.22);
+    box-shadow:0 0 22px rgba(40,100,200,.14);
+    font-family:'SF Mono','Fira Code',monospace;
   }
-  .org-card h4 { font-size:.9rem; font-weight:700; }
-  .org-major { color:var(--green); font-size:.76rem; margin-top:.2rem; }
-  .org-li {
-    color:var(--muted); font-size:.7rem; margin-top:.4rem;
-    display:flex; align-items:center; justify-content:center; gap:.3rem;
-    transition:color .2s;
+  .advisor-body { flex:1; min-width:0; }
+  .advisor-role-tag {
+    display:inline-block; font-size:.58rem; letter-spacing:.12em;
+    text-transform:uppercase; color:rgba(90,165,255,.75);
+    font-family:'SF Mono','Fira Code',monospace;
+    background:rgba(40,100,220,.1); border:1px solid rgba(60,130,220,.2);
+    border-radius:4px; padding:.15rem .45rem; margin-bottom:.5rem;
   }
-  .org-card:hover .org-li { color:var(--green-l); }
-  .advisors-label {
-    font-size:.75rem; letter-spacing:.1em; color:var(--muted);
-    text-transform:uppercase; margin:3rem 0 -1rem; text-align:center;
+  .advisor-card h4 { font-size:.93rem; font-weight:800; margin-bottom:.18rem; }
+  .advisor-dept { color:var(--green-l); font-size:.76rem; font-weight:600; margin-bottom:.14rem; }
+  .advisor-inst { color:var(--muted); font-size:.7rem; margin-bottom:.55rem; }
+  .advisor-li {
+    display:inline-flex; align-items:center; gap:.3rem;
+    color:var(--muted); font-size:.7rem; transition:color .2s;
+  }
+  .advisor-card:hover .advisor-li { color:var(--green); }
+  .team-scene {
+    position:relative; overflow:hidden;
+    padding:5rem 0 6rem;
+    background:linear-gradient(155deg, #04090b 0%, #050d07 45%, #080b04 100%);
+  }
+  /* Inspiring bg: rising streaks */
+  @keyframes team-streak {
+    0%   { transform:translateY(110%) scaleY(.3); opacity:0; }
+    12%  { opacity:1; }
+    88%  { opacity:.5; }
+    100% { transform:translateY(-110%) scaleY(1); opacity:0; }
+  }
+  .team-streak {
+    position:absolute; width:1px; border-radius:999px;
+    background:linear-gradient(to top, transparent 0%, rgba(0,200,83,.5) 50%, transparent 100%);
+    pointer-events:none; animation:team-streak linear infinite;
+  }
+  .team-glow {
+    position:absolute; border-radius:50%; pointer-events:none;
+  }
+  /* Floating animation per wave position */
+  @keyframes team-float-down {
+    0%,100%{ transform:translateY(38px); }
+    50%    { transform:translateY(30px); }
+  }
+  @keyframes team-float-up {
+    0%,100%{ transform:translateY(0px); }
+    50%    { transform:translateY(-8px); }
+  }
+  /* Wave rows */
+  .team-wave-row {
+    display:flex; justify-content:center; gap:1.35rem;
+    padding:0 1.5rem; align-items:flex-start;
+    margin-top:2.5rem; position:relative; z-index:2;
+  }
+  .team-wave-row + .team-wave-row { margin-top:0; padding-bottom:2rem; }
+  /* Cards */
+  .team-card {
+    flex:0 0 auto; width:min(172px,calc(20% - 1.35rem));
+    border-radius:18px; overflow:hidden;
+    border:1px solid rgba(0,200,83,.14);
+    background:rgba(5,13,8,.92);
+    backdrop-filter:blur(18px);
+    text-decoration:none; color:var(--text);
+    cursor:none; position:relative;
+    transition:border-color .3s, box-shadow .3s;
+  }
+  .team-card[data-wave="down"] { animation:team-float-down 4.5s ease-in-out infinite; }
+  .team-card[data-wave="up"]   { animation:team-float-up   4.5s ease-in-out infinite; }
+  .team-card:nth-child(2) { animation-delay:-.6s; }
+  .team-card:nth-child(3) { animation-delay:-1.2s; }
+  .team-card:nth-child(4) { animation-delay:-1.8s; }
+  .team-card:nth-child(5) { animation-delay:-2.4s; }
+  .team-card:hover {
+    border-color:rgba(0,200,83,.55);
+    box-shadow:0 28px 60px rgba(0,0,0,.65), 0 0 36px rgba(0,200,83,.12);
+    z-index:10;
+  }
+  /* Photo area — 70% of card */
+  .team-photo {
+    width:100%; height:195px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .team-photo::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to bottom, transparent 55%, rgba(5,13,8,.92) 100%);
+  }
+  .team-initials {
+    font-size:3.6rem; font-weight:900; color:rgba(0,200,83,.35);
+    letter-spacing:-.04em; user-select:none; position:relative; z-index:1;
+    text-shadow:0 0 40px rgba(0,200,83,.2);
+    font-family:'SF Mono','Fira Code',monospace;
+  }
+  /* Info area — 30% */
+  .team-wave-row .team-card:nth-child(3) {
+    width:min(198px, calc(23% - 1.35rem));
+  }
+  .team-wave-row .team-card:nth-child(3) .team-photo { height:224px; }
+  .team-wave-row .team-card:nth-child(3) .team-initials { font-size:4.15rem; }
+  .team-wave-row .team-card:nth-child(3) h4 { font-size:.97rem; }
+  .team-info {
+    padding:.8rem .9rem 1rem; text-align:center;
+    border-top:1px solid rgba(0,200,83,.08);
+  }
+  .team-info h4 { font-size:.84rem; font-weight:800; margin-bottom:.22rem; line-height:1.3; }
+  .team-major { color:var(--green-l); font-size:.7rem; font-weight:600; margin-bottom:.5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .team-li {
+    display:inline-flex; align-items:center; gap:.28rem;
+    color:var(--muted); font-size:.68rem; transition:color .2s;
+  }
+  .team-card:hover .team-li { color:var(--green); }
+  .team-advisor-tag {
+    position:absolute; top:.6rem; right:.6rem; z-index:2;
+    font-size:.55rem; letter-spacing:.1em; text-transform:uppercase;
+    background:rgba(0,200,83,.12); border:1px solid rgba(0,200,83,.22);
+    border-radius:4px; padding:.15rem .4rem; color:var(--green);
+    font-family:'SF Mono','Fira Code',monospace;
+  }
+  @media(max-width:960px) {
+    .team-card { width:min(150px,calc(33% - 1.35rem)); }
+    .team-photo { height:165px; }
+    .team-wave-row { gap:1rem; flex-wrap:wrap; }
+    .team-card[data-wave="down"], .team-card[data-wave="up"] { animation:none; transform:none !important; }
+  }
+  @media(max-width:600px) {
+    .team-card { width:calc(50% - .75rem); }
+    .team-photo { height:140px; }
   }
 
   /* ── RESPONSIVE ─────────────────────────────────────────── */
@@ -984,32 +1156,27 @@
     .burger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
     .burger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
     .burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
-    .about-grid,.prizes-grid { grid-template-columns:1fr; }
+    .about-grid { grid-template-columns:1fr; }
     .stats-grid { grid-template-columns:1fr 1fr; }
     .form-grid { grid-template-columns:1fr; }
     .footer-grid { grid-template-columns:1fr 1fr; gap:2rem; }
     .register-inner { padding:2rem; }
     .tl-item { grid-template-columns:80px 1fr; gap:1rem; }
-    .prize-card.featured { transform:none; }
     #faq .container { grid-template-columns:1fr !important; }
-    .org-grid { grid-template-columns:repeat(2,1fr); }
-    .mentors-grid { grid-template-columns:repeat(2,1fr); }
-    .challenges-grid { grid-template-columns:1fr; }
-    .special-prizes { grid-template-columns:1fr 1fr; }
-    .track-winners-grid { grid-template-columns:1fr 1fr; }
+    .keynote-card { flex-direction:column; text-align:center; }
+    .team-card { width:min(150px,calc(33% - 1rem)); }
+    .chal-bracket { display:none; }
   }
   @media(max-width:480px) {
     .countdown { gap:.5rem; }
     .cd-box { padding:.55rem .8rem; }
     .cd-num { font-size:1.9rem; }
     .cd-sep { font-size:1.6rem; }
-    .org-grid { grid-template-columns:repeat(2,1fr); }
     .footer-grid { grid-template-columns:1fr; }
     .hero-btns { flex-direction:column; align-items:center; }
     .section-title { font-size:clamp(1.6rem,5vw,2.5rem); }
-    .special-prizes { grid-template-columns:1fr; }
-    .prizes-grid { grid-template-columns:1fr; }
-    .mentors-grid { grid-template-columns:repeat(2,1fr); }
+    .keynote-card { flex-direction:column; text-align:center; }
+    .team-card { width:min(150px,calc(33% - 1rem)); }
     .timeline-tabs { flex-direction:column; gap:.5rem; }
     .nav-logo { font-size:1.1rem; }
   }
@@ -1041,7 +1208,6 @@
   <ul class="nav-links" id="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#tracks">Tracks</a></li>
-    <li><a href="#prizes">Prizes</a></li>
     <li><a href="#schedule">Schedule</a></li>
     <li><a href="#organizers">Team</a></li>
     <li><a href="#faq">FAQ</a></li>
@@ -1375,25 +1541,37 @@
           <div class="track-icon"><i data-lucide="brain" width="22" height="22"></i></div>
           <h3>AI &amp; Machine Learning</h3>
           <p>Build intelligent systems, LLM-powered apps, computer vision tools, and autonomous agents.</p>
-          <div class="track-tag">Track 01</div>
+          <div class="track-prize-row">
+            <div class="track-prize-badge"><i data-lucide="trophy" width="11" height="11"></i> $1,000 Top Winner</div>
+            <div class="track-tag">Track 01</div>
+          </div>
         </div>
         <div class="track-deck-card" data-idx="1" data-pos="1">
           <div class="track-icon"><i data-lucide="heart-pulse" width="22" height="22"></i></div>
           <h3>HealthTech</h3>
           <p>Digital health, wearables, mental wellness platforms, and patient care AI.</p>
-          <div class="track-tag">Track 02</div>
+          <div class="track-prize-row">
+            <div class="track-prize-badge"><i data-lucide="trophy" width="11" height="11"></i> $1,000 Top Winner</div>
+            <div class="track-tag">Track 02</div>
+          </div>
         </div>
         <div class="track-deck-card" data-idx="2" data-pos="2">
           <div class="track-icon"><i data-lucide="leaf" width="22" height="22"></i></div>
           <h3>Sustainability</h3>
           <p>Climate tech, carbon tracking, green energy optimization, and eco-smart systems.</p>
-          <div class="track-tag">Track 03</div>
+          <div class="track-prize-row">
+            <div class="track-prize-badge"><i data-lucide="trophy" width="11" height="11"></i> $1,000 Top Winner</div>
+            <div class="track-tag">Track 03</div>
+          </div>
         </div>
         <div class="track-deck-card" data-idx="3" data-pos="3">
           <div class="track-icon"><i data-lucide="lightbulb" width="22" height="22"></i></div>
           <h3>Open Innovation</h3>
           <p>No constraints. Build anything that solves a real problem and wows the judges.</p>
-          <div class="track-tag">Track 04</div>
+          <div class="track-prize-row">
+            <div class="track-prize-badge"><i data-lucide="trophy" width="11" height="11"></i> $1,000 Top Winner</div>
+            <div class="track-tag">Track 04</div>
+          </div>
         </div>
       </div>
       <!-- navigation dots -->
@@ -1413,148 +1591,142 @@
 
 <!-- ══════════════════════════ COMPANY CHALLENGES ════════════════════ -->
 <section id="challenges">
-  <div class="container">
-    <div class="reveal" style="text-align:center">
-      <div class="section-tag" style="margin:0 auto"><i data-lucide="building-2" width="12" height="12"></i> Company Challenges</div>
-      <h2 class="section-title" style="margin-top:.75rem">Challenges from <span>Top Companies</span></h2>
-      <p class="section-desc" style="margin:0 auto">Win additional prizes by tackling real problems posed by industry leaders — on top of your track submission.</p>
-    </div>
-    <div class="challenges-grid">
+  <div class="chal-scene">
+    <div class="chal-bg-grid"></div>
+    <div class="chal-bg-scan"></div>
+    <div class="chal-bracket tl"></div>
+    <div class="chal-bracket tr"></div>
+    <div class="chal-bracket bl"></div>
+    <div class="chal-bracket br"></div>
 
-      <div class="challenge-card reveal">
-        <div class="challenge-header">
-          <div class="company-badge" style="background:rgba(66,133,244,.12);color:#4285F4;border-color:rgba(66,133,244,.25);">GOOG</div>
-          <div>
-            <div class="challenge-company">Google</div>
-            <h3>Build with Gemini</h3>
+    <div class="container" style="position:relative;z-index:2">
+      <div class="reveal" style="text-align:center">
+        <div class="section-tag" style="margin:0 auto"><i data-lucide="building-2" width="12" height="12"></i> Company Challenges</div>
+        <h2 class="section-title" style="margin-top:.75rem">Challenges from <span>Top Companies</span></h2>
+        <p class="section-desc" style="margin:0 auto">Real problems from industry leaders — revealed at the opening ceremony. Top winner for each challenge earns $500.</p>
+      </div>
+
+      <div class="chal-carousel reveal">
+        <div class="chal-row">
+          <button class="chal-arrow" id="chalPrev" aria-label="Previous challenge">
+            <i data-lucide="chevron-left" width="20" height="20"></i>
+          </button>
+          <div class="chal-viewport">
+            <div class="chal-track" id="chalTrack">
+
+              <!-- State Farm -->
+              <div class="chal-card" data-idx="0">
+                <div class="chal-co-header">
+                  <div class="chal-co-badge" style="background:rgba(204,20,34,.12);color:#e03040;border:1px solid rgba(204,20,34,.28);">SF</div>
+                  <div>
+                    <div class="chal-co-name">State Farm</div>
+                    <div class="chal-co-industry">Insurance &amp; Financial Services</div>
+                  </div>
+                </div>
+                <div class="chal-divider"></div>
+                <div class="chal-lock-block">
+                  <div class="chal-lock-icon"><i data-lucide="lock" width="16" height="16"></i></div>
+                  <div>
+                    <div class="chal-lock-label">Challenge Details — Classified</div>
+                    <div class="chal-lock-sub">Revealed at Opening Ceremony<br>March 20, 2027 &middot; 9:00 AM</div>
+                  </div>
+                </div>
+                <div class="chal-prize-row">
+                  <div class="chal-prize-badge"><i data-lucide="trophy" width="11" height="11"></i> $500 Top Winner</div>
+                  <div class="chal-card-num">01 / 04</div>
+                </div>
+              </div>
+
+              <!-- GROWMARK -->
+              <div class="chal-card" data-idx="1">
+                <div class="chal-co-header">
+                  <div class="chal-co-badge" style="background:rgba(107,175,35,.12);color:#7ec832;border:1px solid rgba(107,175,35,.28);">GM</div>
+                  <div>
+                    <div class="chal-co-name">GROWMARK</div>
+                    <div class="chal-co-industry">Agriculture &amp; Energy</div>
+                  </div>
+                </div>
+                <div class="chal-divider"></div>
+                <div class="chal-lock-block">
+                  <div class="chal-lock-icon"><i data-lucide="lock" width="16" height="16"></i></div>
+                  <div>
+                    <div class="chal-lock-label">Challenge Details — Classified</div>
+                    <div class="chal-lock-sub">Revealed at Opening Ceremony<br>March 20, 2027 &middot; 9:00 AM</div>
+                  </div>
+                </div>
+                <div class="chal-prize-row">
+                  <div class="chal-prize-badge"><i data-lucide="trophy" width="11" height="11"></i> $500 Top Winner</div>
+                  <div class="chal-card-num">02 / 04</div>
+                </div>
+              </div>
+
+              <!-- Country Financial -->
+              <div class="chal-card" data-idx="2">
+                <div class="chal-co-header">
+                  <div class="chal-co-badge" style="background:rgba(30,80,180,.14);color:#7aadff;border:1px solid rgba(30,80,180,.3);">CF</div>
+                  <div>
+                    <div class="chal-co-name">Country Financial</div>
+                    <div class="chal-co-industry">Insurance &amp; Investment</div>
+                  </div>
+                </div>
+                <div class="chal-divider"></div>
+                <div class="chal-lock-block">
+                  <div class="chal-lock-icon"><i data-lucide="lock" width="16" height="16"></i></div>
+                  <div>
+                    <div class="chal-lock-label">Challenge Details — Classified</div>
+                    <div class="chal-lock-sub">Revealed at Opening Ceremony<br>March 20, 2027 &middot; 9:00 AM</div>
+                  </div>
+                </div>
+                <div class="chal-prize-row">
+                  <div class="chal-prize-badge"><i data-lucide="trophy" width="11" height="11"></i> $500 Top Winner</div>
+                  <div class="chal-card-num">03 / 04</div>
+                </div>
+              </div>
+
+              <!-- Rivian -->
+              <div class="chal-card" data-idx="3">
+                <div class="chal-co-header">
+                  <div class="chal-co-badge" style="background:rgba(0,163,108,.12);color:#00d48c;border:1px solid rgba(0,163,108,.3);">RVN</div>
+                  <div>
+                    <div class="chal-co-name">Rivian</div>
+                    <div class="chal-co-industry">Electric Vehicles &amp; Technology</div>
+                  </div>
+                </div>
+                <div class="chal-divider"></div>
+                <div class="chal-lock-block">
+                  <div class="chal-lock-icon"><i data-lucide="lock" width="16" height="16"></i></div>
+                  <div>
+                    <div class="chal-lock-label">Challenge Details — Classified</div>
+                    <div class="chal-lock-sub">Revealed at Opening Ceremony<br>March 20, 2027 &middot; 9:00 AM</div>
+                  </div>
+                </div>
+                <div class="chal-prize-row">
+                  <div class="chal-prize-badge"><i data-lucide="trophy" width="11" height="11"></i> $500 Top Winner</div>
+                  <div class="chal-card-num">04 / 04</div>
+                </div>
+              </div>
+
+            </div>
           </div>
+          <button class="chal-arrow" id="chalNext" aria-label="Next challenge">
+            <i data-lucide="chevron-right" width="20" height="20"></i>
+          </button>
         </div>
-        <p>Create a multimodal application using the Gemini API — combining text, image, audio, or video to solve a meaningful problem.</p>
-        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $3,000 + Google Cloud Credits</div>
-      </div>
-
-      <div class="challenge-card reveal" style="transition-delay:.08s">
-        <div class="challenge-header">
-          <div class="company-badge" style="background:rgba(205,127,50,.1);color:#b8872a;border-color:rgba(205,127,50,.25);">ANTH</div>
-          <div>
-            <div class="challenge-company">Anthropic</div>
-            <h3>Human × Claude Collab</h3>
-          </div>
+        <div class="chal-dots" id="chalDots">
+          <div class="chal-dot active" data-ci="0"></div>
+          <div class="chal-dot" data-ci="1"></div>
+          <div class="chal-dot" data-ci="2"></div>
+          <div class="chal-dot" data-ci="3"></div>
         </div>
-        <p>Build a tool where Claude genuinely amplifies human capability — not replaces it. Show thoughtful, safe AI integration.</p>
-        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $3,000 + API Credits</div>
-      </div>
-
-      <div class="challenge-card reveal" style="transition-delay:.16s">
-        <div class="challenge-header">
-          <div class="company-badge" style="background:rgba(0,200,83,.1);color:var(--green);border-color:rgba(0,200,83,.25);">STRP</div>
-          <div>
-            <div class="challenge-company">Stripe</div>
-            <h3>Payments Re-imagined</h3>
-          </div>
-        </div>
-        <p>Use the Stripe API to build a novel payments experience — subscriptions, marketplaces, instant payouts, or financial tooling.</p>
-        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $2,500 + Stripe Credits</div>
-      </div>
-
-      <div class="challenge-card reveal" style="transition-delay:.24s">
-        <div class="challenge-header">
-          <div class="company-badge" style="background:rgba(255,153,0,.1);color:#FF9900;border-color:rgba(255,153,0,.25);">AWS</div>
-          <div>
-            <div class="challenge-company">Amazon Web Services</div>
-            <h3>Serverless at Scale</h3>
-          </div>
-        </div>
-        <p>Deploy a fully serverless architecture on AWS — Lambda, DynamoDB, S3, and beyond. Judged on scalability and cloud-native design.</p>
-        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $2,500 + AWS Credits</div>
-      </div>
-
-      <div class="challenge-card reveal" style="transition-delay:.32s">
-        <div class="challenge-header">
-          <div class="company-badge" style="background:rgba(0,120,212,.1);color:#0078D4;border-color:rgba(0,120,212,.25);">MSFT</div>
-          <div>
-            <div class="challenge-company">Microsoft</div>
-            <h3>Copilot for Everyone</h3>
-          </div>
-        </div>
-        <p>Extend or build a Copilot-style experience using Azure OpenAI or GitHub Copilot APIs to supercharge a developer workflow.</p>
-        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $2,000 + Azure Credits</div>
-      </div>
-
-      <div class="challenge-card reveal" style="transition-delay:.4s">
-        <div class="challenge-header">
-          <div class="company-badge" style="background:rgba(36,41,47,.4);color:#e8f5e9;border-color:rgba(255,255,255,.1);">GH</div>
-          <div>
-            <div class="challenge-company">GitHub</div>
-            <h3>Best Developer Tool</h3>
-          </div>
-        </div>
-        <p>Build something that makes developers' lives measurably better — a CLI, extension, automation, or open-source contribution tool.</p>
-        <div class="challenge-prize"><i data-lucide="trophy" width="12" height="12"></i> $2,000 + GitHub Swag</div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════ PRIZES ════════════════════════════ -->
-<section id="prizes">
-  <div class="container">
-    <div class="reveal" style="text-align:center">
-      <div class="section-tag" style="margin:0 auto"><i data-lucide="trophy" width="12" height="12"></i> Prizes</div>
-      <h2 class="section-title" style="margin-top:.75rem">Win <span>Big</span></h2>
-      <p class="section-desc" style="margin:0 auto">$50,000 in cash and prizes up for grabs across all tracks.</p>
-    </div>
-    <!-- Track Winners -->
-    <div class="track-winners-label reveal">Track Winners</div>
-    <div class="track-winners-grid reveal">
-      <div class="track-winner-card">
-        <div class="tw-icon"><i data-lucide="brain" width="26" height="26"></i></div>
-        <div class="tw-track">AI &amp; ML</div>
-        <div class="tw-amount">$5,000</div>
-        <div class="tw-label">Track Champion</div>
-      </div>
-      <div class="track-winner-card">
-        <div class="tw-icon"><i data-lucide="heart-pulse" width="26" height="26"></i></div>
-        <div class="tw-track">HealthTech</div>
-        <div class="tw-amount">$5,000</div>
-        <div class="tw-label">Track Champion</div>
-      </div>
-      <div class="track-winner-card">
-        <div class="tw-icon"><i data-lucide="leaf" width="26" height="26"></i></div>
-        <div class="tw-track">Sustainability</div>
-        <div class="tw-amount">$5,000</div>
-        <div class="tw-label">Track Champion</div>
-      </div>
-      <div class="track-winner-card">
-        <div class="tw-icon"><i data-lucide="lightbulb" width="26" height="26"></i></div>
-        <div class="tw-track">Open Innovation</div>
-        <div class="tw-amount">$5,000</div>
-        <div class="tw-label">Track Champion</div>
-      </div>
-    </div>
-
-    <!-- Special Prizes -->
-    <div class="special-prizes reveal">
-      <div class="special-card">
-        <div class="special-icon"><i data-lucide="building-2" width="24" height="24"></i></div>
-        <div><strong>Best Company Challenge</strong><span>$2,000 + sponsor perks</span></div>
-      </div>
-      <div class="special-card">
-        <div class="special-icon"><i data-lucide="sparkles" width="24" height="24"></i></div>
-        <div><strong>Most Creative</strong><span>$1,500 + Design Studio</span></div>
-      </div>
-      <div class="special-card">
-        <div class="special-icon"><i data-lucide="user" width="24" height="24"></i></div>
-        <div><strong>Solo Hacker</strong><span>$1,000 Cash</span></div>
-      </div>
-      <div class="special-card">
-        <div class="special-icon"><i data-lucide="graduation-cap" width="24" height="24"></i></div>
-        <div><strong>Best First-Timer</strong><span>$500 + Mentorship Pack</span></div>
+        <p class="deck-hint">
+        <i data-lucide="mouse-pointer-click" width="12" height="12" style="display:inline-block;vertical-align:middle;"></i>
+        Click arrow or side cards to view
+      </p>
       </div>
     </div>
   </div>
 </section>
+
 
 <!-- ══════════════════════════════ SCHEDULE ══════════════════════════ -->
 <section id="schedule">
@@ -1565,175 +1737,259 @@
     </div>
     <div class="timeline-tabs reveal">
       <button class="tab-btn active" onclick="switchDay('day1',this)">
-        <i data-lucide="sun" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:6px;"></i> Day 1 — March 20
+        <i data-lucide="sun" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:6px;"></i> Day 1 - March 20
       </button>
       <button class="tab-btn" onclick="switchDay('day2',this)">
-        <i data-lucide="flag" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:6px;"></i> Day 2 — March 21
+        <i data-lucide="flag" width="14" height="14" style="display:inline-block;vertical-align:middle;margin-right:6px;"></i> Day 2 - March 21
       </button>
     </div>
 
     <div id="day1" class="timeline active">
       <div class="tl-item"><div class="tl-time">9:00 AM</div><div class="tl-body"><strong><i data-lucide="door-open" width="14" height="14"></i> Check-In &amp; Badge Pickup</strong><p>Arrive, grab your badge, meet your fellow titans.</p></div></div>
-      <div class="tl-item"><div class="tl-time">10:00 AM</div><div class="tl-body"><strong><i data-lucide="mic" width="14" height="14"></i> Opening Ceremony</strong><p>Keynote from our headline sponsors, rules brief, team formation mixer.</p></div></div>
-      <div class="tl-item"><div class="tl-time">11:00 AM</div><div class="tl-body"><strong><i data-lucide="zap" width="14" height="14"></i> Hacking Begins — Clock Starts!</strong><p>24-hour timer starts. APIs unlock. Company challenges go live.</p></div></div>
-      <div class="tl-item"><div class="tl-time">1:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Lunch + Company Booths Open</strong><p>Free catered lunch. Chat with Google, Anthropic, Stripe, AWS, Microsoft &amp; GitHub reps.</p></div></div>
-      <div class="tl-item"><div class="tl-time">3:00 PM</div><div class="tl-body"><strong><i data-lucide="users" width="14" height="14"></i> Workshop: Build with AI APIs</strong><p>Hands-on with Claude, Gemini, and GPT-4o. Hosted by Anthropic &amp; Google engineers.</p></div></div>
-      <div class="tl-item"><div class="tl-time">5:00 PM</div><div class="tl-body"><strong><i data-lucide="star" width="14" height="14"></i> Mentor Office Hours — Round 1</strong><p>Book 1:1 slots with industry mentors across all 4 tracks.</p></div></div>
-      <div class="tl-item"><div class="tl-time">7:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Dinner</strong><p>Fuel up. The real grind begins tonight.</p></div></div>
+      <div class="tl-item"><div class="tl-time">11:00 AM</div><div class="tl-body"><strong><i data-lucide="mic" width="14" height="14"></i> Opening Ceremony</strong><p>Keynote from our headline sponsors, rules brief, team formation mixer.</p></div></div>
+      <div class="tl-item"><div class="tl-time">12:00 PM</div><div class="tl-body"><strong><i data-lucide="zap" width="14" height="14"></i> Hacking Begins - Clock Starts!</strong><p>24-hour timer starts. APIs unlock. Company challenges go live.</p></div></div>
+      <div class="tl-item"><div class="tl-time">1:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Lunch + Company Booths Open</strong><p>Free catered lunch. Chat with State Farm, GROWMARK, RIVIVAN, &amp; Country Financial reps.</p></div></div>
+      <div class="tl-item"><div class="tl-time">3:00 PM</div><div class="tl-body"><strong><i data-lucide="users" width="14" height="14"></i> Workshop: Build with AI APIs</strong><p>Hands-on with Google Developer Group &amp; Google engineers.</p></div></div>
+      <div class="tl-item"><div class="tl-time">6:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Dinner</strong><p>Fuel up. The real grind begins tonight.</p></div></div>
       <div class="tl-item"><div class="tl-time">10:00 PM</div><div class="tl-body"><strong><i data-lucide="coffee" width="14" height="14"></i> Late-Night Snacks + Mentor Office Hours — Round 2</strong><p>Pizza, energy drinks, and last-call mentor sessions.</p></div></div>
-      <div class="tl-item"><div class="tl-time">Midnight</div><div class="tl-body"><strong><i data-lucide="moon" width="14" height="14"></i> Deep Work Hours</strong><p>Quiet mode. Heads down. 11 hours left on the clock.</p></div></div>
+      <div class="tl-item"><div class="tl-time">Midnight</div><div class="tl-body"><strong><i data-lucide="moon" width="14" height="14"></i> Deep Work Hours</strong><p>Quiet mode. Heads down. 12 hours left on the clock.</p></div></div>
     </div>
 
     <div id="day2" class="timeline">
       <div class="tl-item"><div class="tl-time">7:00 AM</div><div class="tl-body"><strong><i data-lucide="sunrise" width="14" height="14"></i> Breakfast &amp; Final Sprint</strong><p>Wake up fuel. 4 hours left — polish, deploy, and prep your demo.</p></div></div>
-      <div class="tl-item"><div class="tl-time">10:30 AM</div><div class="tl-body"><strong><i data-lucide="alert-circle" width="14" height="14"></i> 30-Minute Warning</strong><p>Wrap up. Start writing your README and submission form.</p></div></div>
-      <div class="tl-item"><div class="tl-time">11:00 AM</div><div class="tl-body"><strong><i data-lucide="flag" width="14" height="14"></i> Submissions Close</strong><p>Forks down. Final commit. All 4 track submissions locked.</p></div></div>
-      <div class="tl-item"><div class="tl-time">11:30 AM</div><div class="tl-body"><strong><i data-lucide="monitor" width="14" height="14"></i> Track Demos — All 4 Tracks Simultaneously</strong><p>Each team presents to their track judges. 3 min demo + 2 min Q&amp;A.</p></div></div>
-      <div class="tl-item"><div class="tl-time">1:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Lunch &amp; Judge Deliberation</strong><p>Eat, decompress — track winners and finalists being selected.</p></div></div>
-      <div class="tl-item"><div class="tl-time">2:30 PM</div><div class="tl-body"><strong><i data-lucide="star" width="14" height="14"></i> Grand Finals — Top Teams Present</strong><p>Track winners compete for Grand Champion. Live audience, live judging.</p></div></div>
+      <div class="tl-item"><div class="tl-time">11:30 AM</div><div class="tl-body"><strong><i data-lucide="alert-circle" width="14" height="14"></i> 30-Minute Warning</strong><p>Wrap up. Start writing your README and submission form.</p></div></div>
+      <div class="tl-item"><div class="tl-time">12:00 PM</div><div class="tl-body"><strong><i data-lucide="flag" width="14" height="14"></i> Submissions Close</strong><p>Forks down. Final commit. All 4 track submissions locked.</p></div></div>
+      <div class="tl-item"><div class="tl-time">12:30 PM</div><div class="tl-body"><strong><i data-lucide="monitor" width="14" height="14"></i> Track Demos - All 4 Tracks Simultaneously</strong><p>Each team presents to their track judges. 3 min demo + 2 min Q&amp;A.</p></div></div>
+      <div class="tl-item"><div class="tl-time">2:00 PM</div><div class="tl-body"><strong><i data-lucide="utensils" width="14" height="14"></i> Lunch &amp; Judge Deliberation</strong><p>Eat, decompress - track winners and finalists being selected.</p></div></div>
+      <div class="tl-item"><div class="tl-time">3:30 PM</div><div class="tl-body"><strong><i data-lucide="star" width="14" height="14"></i> Grand Finals - Top Teams Present</strong><p>Track winners compete for Grand Champion. Live audience, live judging.</p></div></div>
       <div class="tl-item"><div class="tl-time">4:00 PM</div><div class="tl-body"><strong><i data-lucide="trophy" width="14" height="14"></i> Award Ceremony</strong><p>Grand Champion + 4 Track Winners + Company Challenge winners announced.</p></div></div>
       <div class="tl-item"><div class="tl-time">5:00 PM</div><div class="tl-body"><strong><i data-lucide="party-popper" width="14" height="14"></i> Closing Celebration</strong><p>Networking mixer, music, photos, and see you next year.</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════ MENTORS ═══════════════════════════ -->
+<!-- ══════════════════════════ KEYNOTE SPEAKERS ══════════════════════ -->
 <section id="mentors">
   <div class="container">
     <div class="reveal" style="text-align:center">
-      <div class="section-tag" style="margin:0 auto"><i data-lucide="graduation-cap" width="12" height="12"></i> Mentors</div>
-      <h2 class="section-title" style="margin-top:.75rem">Learn from the <span>Best</span></h2>
-      <p class="section-desc" style="margin:0 auto">Industry veterans ready to guide you through your 24-hour build.</p>
+      <div class="section-tag" style="margin:0 auto"><i data-lucide="mic" width="12" height="12"></i> Keynote Speakers</div>
+      <h2 class="section-title" style="margin-top:.75rem">Hear from <span>Industry Leaders</span></h2>
+      <p class="section-desc" style="margin:0 auto">Opening ceremony keynotes from practitioners shaping the future of technology.</p>
     </div>
-    <div class="mentors-grid">
-      <div class="mentor-card reveal">
-        <div class="mentor-avatar">AK</div>
-        <h4>Aisha Khan</h4>
-        <p>Staff Engineer</p>
-        <span>Google DeepMind</span>
+    <div class="keynote-grid">
+
+      <div class="keynote-card reveal">
+        <div class="keynote-avatar">JD</div>
+        <div class="keynote-info">
+          <div class="keynote-tag">Keynote 01</div>
+          <h4>John Doe</h4>
+          <div class="keynote-title">Title, Role</div>
+          <div class="keynote-org">Organization</div>
+          <a href="https://linkedin.com/in/" class="keynote-linkedin" target="_blank" rel="noopener">
+            <i data-lucide="linkedin" width="12" height="12"></i> LinkedIn
+          </a>
+        </div>
       </div>
-      <div class="mentor-card reveal" style="transition-delay:.07s">
-        <div class="mentor-avatar">ML</div>
-        <h4>Marcus Lee</h4>
-        <p>Co-Founder</p>
-        <span>Titan Ventures</span>
+
+      <div class="keynote-card reveal" style="transition-delay:.1s">
+        <div class="keynote-avatar">JD</div>
+        <div class="keynote-info">
+          <div class="keynote-tag">Keynote 02</div>
+          <h4>Jane Doe</h4>
+          <div class="keynote-title">Title, Role</div>
+          <div class="keynote-org">Organization</div>
+          <a href="https://linkedin.com/in/" class="keynote-linkedin" target="_blank" rel="noopener">
+            <i data-lucide="linkedin" width="12" height="12"></i> LinkedIn
+          </a>
+        </div>
       </div>
-      <div class="mentor-card reveal" style="transition-delay:.14s">
-        <div class="mentor-avatar">SP</div>
-        <h4>Sofia Patel</h4>
-        <p>ML Research Lead</p>
-        <span>Anthropic</span>
-      </div>
-      <div class="mentor-card reveal" style="transition-delay:.21s">
-        <div class="mentor-avatar">JR</div>
-        <h4>James Rowe</h4>
-        <p>Principal Engineer</p>
-        <span>Stripe</span>
-      </div>
-      <div class="mentor-card reveal" style="transition-delay:.28s">
-        <div class="mentor-avatar">YN</div>
-        <h4>Yuki Nakamura</h4>
-        <p>Web3 Lead</p>
-        <span>Coinbase</span>
-      </div>
-      <div class="mentor-card reveal" style="transition-delay:.35s">
-        <div class="mentor-avatar">CR</div>
-        <h4>Clara Reyes</h4>
-        <p>Product Director</p>
-        <span>Microsoft</span>
-      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════ ORGANIZERS ════════════════════════════ -->
+<!-- ══════════════════════════════ TEAM ═══════════════════════════════ -->
 <section id="organizers">
-  <div class="container">
-    <div class="reveal" style="text-align:center">
-      <div class="section-tag" style="margin:0 auto"><i data-lucide="users-2" width="12" height="12"></i> Team</div>
-      <h2 class="section-title" style="margin-top:.75rem">Meet the <span>Organizers</span></h2>
-      <p class="section-desc" style="margin:0 auto">The team making HackTitan 2027 happen — your point of contact for everything.</p>
-    </div>
-    <div class="org-grid">
+  <div class="team-scene" id="teamScene">
+    <!-- Rising streaks (injected by JS) -->
+    <!-- Ambient glows -->
+    <div class="team-glow" style="width:600px;height:600px;top:-100px;left:-80px;background:radial-gradient(circle,rgba(0,200,83,.055) 0%,transparent 65%);"></div>
+    <div class="team-glow" style="width:500px;height:500px;bottom:-60px;right:-60px;background:radial-gradient(circle,rgba(180,140,30,.04) 0%,transparent 65%);"></div>
+    <div class="team-glow" style="width:400px;height:400px;top:40%;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(0,200,83,.03) 0%,transparent 70%);"></div>
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal">
-        <div class="org-avatar">HT</div>
-        <h4>Hira Tin</h4>
-        <p class="org-major">Computer Science</p>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
-      </a>
+    <div class="container" style="position:relative;z-index:2">
+      <div class="reveal" style="text-align:center">
+        <div class="section-tag" style="margin:0 auto"><i data-lucide="users-2" width="12" height="12"></i> Team</div>
+        <h2 class="section-title" style="margin-top:.75rem">Meet the <span>Team</span></h2>
+        <p class="section-desc" style="margin:0 auto">The emerging leaders making HackTitan 2027 happen & your point of contact for everything.</p>
+      </div>
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.06s">
-        <div class="org-avatar">AR</div>
-        <h4>Alex Rivera</h4>
-        <p class="org-major">CS &amp; Data Science</p>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
-      </a>
+      <!-- Row 1: 5 organizers -->
+      <div class="team-wave-row reveal">
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.12s">
-        <div class="org-avatar">PN</div>
-        <h4>Priya Nair</h4>
-        <p class="org-major">CS &amp; Biology</p>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
-      </a>
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
+          <div class="team-photo" style="background:linear-gradient(160deg,#051a0c,#0d3318);">
+            <div class="team-initials">HT</div>
+          </div>
+          <div class="team-info">
+            <h4>Hira Tin</h4>
+            <div class="team-major">Computer Science</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.18s">
-        <div class="org-avatar">JK</div>
-        <h4>Jordan Kim</h4>
-        <p class="org-major">CS &amp; Mathematics</p>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
-      </a>
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
+          <div class="team-photo" style="background:linear-gradient(160deg,#071a10,#0a2e18);">
+            <div class="team-initials">AR</div>
+          </div>
+          <div class="team-info">
+            <h4>Alex Rivera</h4>
+            <div class="team-major">CS &amp; Data Science</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.24s">
-        <div class="org-avatar">MC</div>
-        <h4>Marcus Chen</h4>
-        <p class="org-major">CS &amp; Business</p>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
-      </a>
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
+          <div class="team-photo" style="background:linear-gradient(160deg,#04180e,#0b2e1a);">
+            <div class="team-initials">PN</div>
+          </div>
+          <div class="team-info">
+            <h4>Priya Nair</h4>
+            <div class="team-major">CS &amp; Biology</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.30s">
-        <div class="org-avatar">SW</div>
-        <h4>Sofia Williams</h4>
-        <p class="org-major">CS &amp; Psychology</p>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
-      </a>
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
+          <div class="team-photo" style="background:linear-gradient(160deg,#061a0d,#082e16);">
+            <div class="team-initials">JK</div>
+          </div>
+          <div class="team-info">
+            <h4>Jordan Kim</h4>
+            <div class="team-major">CS &amp; Mathematics</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
+
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
+          <div class="team-photo" style="background:linear-gradient(160deg,#051a0c,#0c3319);">
+            <div class="team-initials">MC</div>
+          </div>
+          <div class="team-info">
+            <h4>Marcus Chen</h4>
+            <div class="team-major">CS &amp; Business</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
+
+      </div><!-- /row 1 -->
+
+      <!-- Row 2 -->
+      <div class="team-wave-row reveal" style="transition-delay:.12s">
+
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
+          <div class="team-photo" style="background:linear-gradient(160deg,#04180f,#0a2d18);">
+            <div class="team-initials">SW</div>
+          </div>
+          <div class="team-info">
+            <h4>Sofia Williams</h4>
+            <div class="team-major">CS &amp; Psychology</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
+
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
+          <div class="team-photo" style="background:linear-gradient(160deg,#061a0d,#0c3319);">
+            <div class="team-initials">TM</div>
+          </div>
+          <div class="team-info">
+            <h4>Team Member</h4>
+            <div class="team-major">Major / Role</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
+
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
+          <div class="team-photo" style="background:linear-gradient(160deg,#051a0c,#0d3318);">
+            <div class="team-initials">TM</div>
+          </div>
+          <div class="team-info">
+            <h4>Team Member</h4>
+            <div class="team-major">Major / Role</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
+
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
+          <div class="team-photo" style="background:linear-gradient(160deg,#071a10,#0a2e18);">
+            <div class="team-initials">TM</div>
+          </div>
+          <div class="team-info">
+            <h4>Team Member</h4>
+            <div class="team-major">Major / Role</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
+
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
+          <div class="team-photo" style="background:linear-gradient(160deg,#04180e,#0b2e1a);">
+            <div class="team-initials">TM</div>
+          </div>
+          <div class="team-info">
+            <h4>Team Member</h4>
+            <div class="team-major">Major / Role</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
+
+      </div><!-- /row 2 -->
 
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════ ADVISORS ══════════════════════════════ -->
+<!-- ══════════════════════════ FACULTY ADVISORS ══════════════════════ -->
 <section id="advisors">
   <div class="container">
     <div class="reveal" style="text-align:center">
-      <div class="section-tag" style="margin:0 auto"><i data-lucide="award" width="12" height="12"></i> Advisors</div>
+      <div class="section-tag" style="margin:0 auto"><i data-lucide="award" width="12" height="12"></i> Faculty &amp; Staff</div>
       <h2 class="section-title" style="margin-top:.75rem">Faculty <span>Advisors</span></h2>
-      <p class="section-desc" style="margin:0 auto">IWU faculty and industry advisors who guide and champion HackTitan.</p>
+      <p class="section-desc" style="margin:0 auto">IWU faculty and staff who guide, champion, and help make HackTitan possible.</p>
     </div>
-    <div class="org-grid" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))">
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal">
-        <div class="org-avatar" style="background:linear-gradient(135deg,#00401A,#00802A)">CA</div>
-        <h4>Dr. Carolyn Anderson</h4>
-        <p class="org-major">Computer Science</p>
-        <span class="org-li" style="color:var(--muted);font-size:.72rem;margin-top:.2rem;display:block">Illinois Wesleyan University</span>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+    <div class="advisors-flex reveal">
+
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="advisor-card">
+        <div class="advisor-av">ML</div>
+        <div class="advisor-body">
+          <div class="advisor-role-tag">Faculty Advisor</div>
+          <h4>Dr. Mark Liffiton</h4>
+          <div class="advisor-dept">Computer Science</div>
+          <div class="advisor-inst">Illinois Wesleyan University</div>
+          <span class="advisor-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+        </div>
       </a>
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.08s">
-        <div class="org-avatar" style="background:linear-gradient(135deg,#00401A,#00802A)">MP</div>
-        <h4>Dr. Mark Peterson</h4>
-        <p class="org-major">CS Department Chair</p>
-        <span class="org-li" style="color:var(--muted);font-size:.72rem;margin-top:.2rem;display:block">Illinois Wesleyan University</span>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="advisor-card">
+        <div class="advisor-av">AS</div>
+        <div class="advisor-body">
+          <div class="advisor-role-tag">Department Chair</div>
+          <h4>Dr. Andrew Shallue</h4>
+          <div class="advisor-dept">CS Department Chair</div>
+          <div class="advisor-inst">Illinois Wesleyan University</div>
+          <span class="advisor-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+        </div>
       </a>
 
-      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="org-card reveal" style="transition-delay:.16s">
-        <div class="org-avatar" style="background:linear-gradient(135deg,#00401A,#00802A)">EZ</div>
-        <h4>Dr. Emily Zhao</h4>
-        <p class="org-major">CS &amp; Innovation Studies</p>
-        <span class="org-li" style="color:var(--muted);font-size:.72rem;margin-top:.2rem;display:block">Illinois Wesleyan University</span>
-        <span class="org-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+      <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="advisor-card">
+        <div class="advisor-av">PZ</div>
+        <div class="advisor-body">
+          <div class="advisor-role-tag">Staff Advisor</div>
+          <h4>Patrick Zajac</h4>
+          <div class="advisor-dept">Associate Director for Career Engagement</div>
+          <div class="advisor-inst">Hart Career Center, IWU</div>
+          <span class="advisor-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+        </div>
       </a>
 
     </div>
@@ -1808,7 +2064,7 @@
   <div class="container">
     <div class="register-inner reveal">
       <h2>Join the <span style="color:var(--green)">Titan</span> Army</h2>
-      <p>Secure your spot — spots fill fast. Registration opens January 1, 2027 and closes March 15, 2027.</p>
+      <p>Secure your spot before they fill. Registration opens January 1, 2027 and closes March 15, 2027.</p>
       <form onsubmit="handleRegister(event)">
         <div class="form-grid">
           <div class="form-group">
@@ -1867,7 +2123,7 @@
         <div class="logo-icon"><i data-lucide="zap" width="20" height="20" color="#000"></i></div>
         HackTitan 2027
       </div>
-      <p>Built by hackers, for hackers. Illinois Wesleyan University's flagship hackathon — 24 hours to build the future.</p>
+      <p>Built by hackers, for hackers. Illinois Wesleyan University's flagship hackathon. 24 hours to build the future.</p>
       <div class="social-row">
         <a href="#" class="social-btn"><i data-lucide="twitter" width="16" height="16"></i></a>
         <a href="#" class="social-btn"><i data-lucide="github" width="16" height="16"></i></a>
@@ -1880,9 +2136,8 @@
       <ul>
         <li><a href="#about">About</a></li>
         <li><a href="#tracks">Tracks</a></li>
-        <li><a href="#prizes">Prizes</a></li>
-        <li><a href="#schedule">Schedule</a></li>
-        <li><a href="#mentors">Mentors</a></li>
+            <li><a href="#schedule">Schedule</a></li>
+        <li><a href="#mentors">Speakers</a></li>
         <li><a href="#organizers">Organizers</a></li>
         <li><a href="#advisors">Advisors</a></li>
       </ul>
@@ -1909,7 +2164,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2027 HackTitan — Illinois Wesleyan University &nbsp;·&nbsp; Made with 💚 and way too much caffeine</p>
+    <p>© 2027 HackTitan - Illinois Wesleyan University &nbsp;·&nbsp; Made with 💚 and way too much caffeine</p>
   </div>
 </footer>
 
@@ -1931,7 +2186,7 @@ document.addEventListener('mousemove',e=>{
   ring.style.left=rx+'px'; ring.style.top=ry+'px';
   requestAnimationFrame(animRing);
 })();
-document.querySelectorAll('a,button,.track-card,.prize-card,.stat-card,.mentor-card,.faq-q,.org-card').forEach(el=>{
+document.querySelectorAll('a,button,.track-card,.stat-card,.keynote-card,.faq-q,.team-card,.advisor-card').forEach(el=>{
   el.addEventListener('mouseenter',()=>{
     cursor.style.width='22px'; cursor.style.height='22px';
     ring.style.width='60px'; ring.style.height='60px';
@@ -1999,7 +2254,7 @@ document.addEventListener('mousemove',e=>{
 });
 
 /* ── TYPEWRITER ────────────────────────────────────────────────────── */
-const phrases=['24 hours. 4 tracks. $10,000 in prizes.','Build what the world needs next.','Code. Create. Conquer.','Your best project starts here.'];
+const phrases=['24 hours. 4 tracks. Real challenges.','Build what the world needs next.','Code. Create. Conquer.','Your best project starts here.'];
 let pi=0,ci=0,del=false;
 const tw=document.getElementById('typewriter');
 (function type(){
@@ -2055,20 +2310,6 @@ const cio=new IntersectionObserver(entries=>{
 },{threshold:.5});
 counterEls.forEach(el=>cio.observe(el));
 
-/* ── PRIZE 3D TILT ─────────────────────────────────────────────────── */
-document.querySelectorAll('.prize-card').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const {left,top,width,height}=card.getBoundingClientRect();
-    const x=(e.clientX-left)/width-.5;
-    const y=(e.clientY-top)/height-.5;
-    card.style.transform=`perspective(800px) rotateY(${x*14}deg) rotateX(${-y*14}deg) scale(1.04)`;
-  });
-  card.addEventListener('mouseleave',()=>{
-    card.style.transform=card.classList.contains('featured')?'scale(1.04)':'';
-    card.style.transition='transform .5s ease';
-    setTimeout(()=>card.style.transition='',500);
-  });
-});
 
 /* ── TIMELINE TABS ─────────────────────────────────────────────────── */
 function switchDay(id,btn){
@@ -2488,6 +2729,79 @@ if(heroLaptop || heroHw){
         `animation:geo-drift ${rnd(3,7)}s ease-in-out ${rnd(0,3)}s infinite;`;
       oiBg.appendChild(g);
     }
+  }
+})();
+
+/* ── COMPANY CHALLENGE CAROUSEL ────────────────────────────────────── */
+(function initChalCarousel(){
+  const cards = Array.from(document.querySelectorAll('.chal-card'));
+  const dots  = Array.from(document.querySelectorAll('.chal-dot'));
+  const prev  = document.getElementById('chalPrev');
+  const next  = document.getElementById('chalNext');
+  if(!cards.length) return;
+  const N = cards.length;
+  let current = 0, busy = false;
+
+  function posFor(idx) {
+    let d = ((idx - current + N) % N);
+    if(d > N / 2) d -= N;
+    return d;
+  }
+
+  function update() {
+    cards.forEach(c => { c.dataset.pos = posFor(+c.dataset.idx); });
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  function go(dir) {
+    if(busy) return;
+    busy = true;
+    current = ((current + dir) + N) % N;
+    update();
+    setTimeout(() => { busy = false; }, 550);
+  }
+
+  prev.addEventListener('click', () => go(-1));
+  next.addEventListener('click', () => go(1));
+  dots.forEach((d, i) => d.addEventListener('click', () => { current = i; update(); }));
+  cards.forEach(c => c.addEventListener('click', () => {
+    const p = +c.dataset.pos;
+    if(p === -1 || p < -1) go(-1);
+    else if(p === 1 || p > 1) go(1);
+  }));
+
+  /* touch / swipe */
+  let tx = 0;
+  const vp = document.querySelector('.chal-viewport');
+  if(vp) {
+    vp.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+    vp.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - tx;
+      if(Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    });
+  }
+
+  update();
+})();
+
+/* ── TEAM PANEL RISING STREAKS ──────────────────────────────────────── */
+(function initTeamBg(){
+  const scene = document.getElementById('teamScene');
+  if(!scene) return;
+  const N = 14;
+  for(let i = 0; i < N; i++){
+    const s = document.createElement('div');
+    s.className = 'team-streak';
+    const h = 60 + Math.random() * 80;
+    s.style.cssText = [
+      `left:${Math.random()*100}%`,
+      `height:${h}px`,
+      `top:${Math.random()*100}%`,
+      `opacity:${.3 + Math.random()*.4}`,
+      `animation-duration:${4 + Math.random()*5}s`,
+      `animation-delay:-${Math.random()*7}s`,
+    ].join(';');
+    scene.appendChild(s);
   }
 })();
 
