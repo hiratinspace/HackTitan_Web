@@ -1,8 +1,8 @@
-# HackTitan 2027 — Official Event Website
+# HackTitan 2027 - Official Event Website
 ## Author: Hirat Rahman
 ***Date: May 21st, 2026 ***
 
-> **Build the Future** — Illinois Wesleyan University's flagship 24-hour hackathon.
+> **Build the Future** - Illinois Wesleyan University's flagship 24-hour hackathon.
 > March 20–21, 2027 · The Patrick Idea Center, IWU · 150 Hackers · $8,000+ in Prizes
 
 ---
@@ -35,7 +35,7 @@ HackTitan is IWU's premier student-run hackathon, a 24-hour sprint where builder
 
 ---
 
-## Prize Pool — $8,000+ Total
+## Prize Pool - $8,000+ Total
 
 ### Track Champions
 Each of the 4 tracks awards **$1,000** to the top team.
@@ -80,7 +80,7 @@ Projects are scored across four dimensions by a dedicated panel of industry judg
 
 ## Website
 
-The event website is a single self-contained HTML file — no build tools, no framework, no bundler. Everything ships in `hacktitan.html`.
+The event website is a single self-contained HTML file - no build tools, no framework, no bundler. Everything ships in `hacktitan.html`.
 
 ### Stack
 
@@ -94,7 +94,7 @@ The event website is a single self-contained HTML file — no build tools, no fr
 
 ### Design System
 
-The visual language is a **dark hacker terminal aesthetic** — deep forest greens, neon accents, PCB textures, and glowing edges.
+The visual language is a **dark hacker terminal aesthetic** - deep forest greens, neon accents, PCB textures, and glowing edges.
 
 
 ### Interactive Features
@@ -127,5 +127,5 @@ Requires an internet connection to load Lucide icons from the unpkg CDN. All oth
 
 ```
 HackTitan Web/
-└── hacktitan.html    # entire website — HTML + CSS + JS, single file
+└── hacktitan.html    # entire website - HTML + CSS + JS, single file
 ```
