@@ -3,7 +3,7 @@
 ***Date: May 21st, 2026 ***
 
 > **Build the Future** — Illinois Wesleyan University's flagship 24-hour hackathon.
-> March 20–21, 2027 · The Patrick Idea Center, IWU · 150 Hackers · $10,000 in Prizes
+> March 20–21, 2027 · The Patrick Idea Center, IWU · 150 Hackers · $8,000+ in Prizes
 
 ---
 
@@ -35,7 +35,7 @@ HackTitan is IWU's premier student-run hackathon, a 24-hour sprint where builder
 
 ---
 
-## Prize Pool — $8,000 Total
+## Prize Pool — $8,000+ Total
 
 ### Track Champions
 Each of the 4 tracks awards **$1,000** to the top team.
