@@ -635,52 +635,52 @@
   .faq-item.open .faq-a { max-height:300px; }
   .faq-a-inner { padding:0 1.25rem 1.15rem; }
 
-  /* ── REGISTER ──────────────────────────────────────────── */
-  #register { background:var(--g0); }
-  .register-inner {
-    background:var(--card-bg); border:1px solid var(--border);
-    border-radius:20px; padding:3.5rem; max-width:680px; margin:0 auto;
-    backdrop-filter:blur(20px); position:relative; overflow:hidden;
+  /* ── SPONSOR ────────────────────────────────────────────── */
+  #sponsor { background:linear-gradient(160deg,#06090a 0%,#04090c 60%,#070805 100%); }
+  .sponsor-inner {
+    display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center;
+    background:rgba(4,10,7,.7); border:1px solid rgba(0,200,83,.12);
+    border-radius:20px; padding:3.5rem; position:relative; overflow:hidden;
   }
-  .register-inner::before {
-    content:''; position:absolute; top:-100px; right:-100px;
-    width:300px; height:300px;
-    background:radial-gradient(circle,rgba(0,200,83,.12),transparent 70%);
+  .sponsor-inner::before {
+    content:''; position:absolute; top:-120px; right:-120px;
+    width:360px; height:360px;
+    background:radial-gradient(circle,rgba(180,140,0,.07),transparent 70%);
     pointer-events:none;
   }
-  .register-inner::after {
+  .sponsor-inner::after {
     content:''; position:absolute; bottom:-80px; left:-80px;
-    width:250px; height:250px;
-    background:radial-gradient(circle,rgba(105,240,174,.08),transparent 70%);
+    width:280px; height:280px;
+    background:radial-gradient(circle,rgba(0,200,83,.06),transparent 70%);
     pointer-events:none;
   }
-  .register-inner h2 { font-size:2rem; font-weight:900; margin-bottom:.5rem; }
-  .register-inner p { color:var(--muted); margin-bottom:2rem; }
-  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .form-group { display:flex; flex-direction:column; gap:.4rem; }
-  .form-group.full { grid-column:1/-1; }
-  label { font-size:.8rem; font-weight:600; color:var(--green-l); letter-spacing:.05em; }
-  input, select, textarea {
-    background:rgba(0,0,0,.4); border:1px solid var(--border);
-    border-radius:8px; padding:.7rem 1rem; color:var(--text);
-    font-size:.9rem; outline:none; transition:border-color .2s, box-shadow .2s;
-    font-family:inherit; cursor:none;
+  .sponsor-left h2 { font-size:1.9rem; font-weight:900; margin-bottom:.6rem; }
+  .sponsor-left p { color:var(--muted); line-height:1.7; margin-bottom:2rem; }
+  .sponsor-btn {
+    display:inline-flex; align-items:center; gap:.55rem;
+    background:transparent; border:1.5px solid rgba(180,140,0,.5);
+    color:#d4aa30; font-weight:700; font-size:.95rem; letter-spacing:.05em;
+    padding:.85rem 2rem; border-radius:10px; text-decoration:none;
+    cursor:none; transition:all .28s;
   }
-  input::placeholder, textarea::placeholder { color:var(--muted); }
-  input:focus, select:focus, textarea:focus {
-    border-color:var(--green); box-shadow:0 0 0 3px rgba(0,200,83,.15);
+  .sponsor-btn:hover {
+    background:rgba(180,140,0,.1); border-color:#d4aa30;
+    box-shadow:0 8px 28px rgba(180,140,0,.15); transform:translateY(-3px);
   }
-  select option { background:var(--g1); }
-  textarea { resize:none; min-height:80px; }
-  .form-submit {
-    margin-top:1.5rem; width:100%;
-    padding:1rem; border-radius:10px; border:none;
-    background:linear-gradient(135deg,var(--green),#00A844);
-    color:#000; font-weight:800; font-size:1.05rem;
-    cursor:none; transition:all .25s; letter-spacing:.06em;
-    display:flex; align-items:center; justify-content:center; gap:.5rem;
+  .sponsor-perks { list-style:none; display:flex; flex-direction:column; gap:.85rem; }
+  .sponsor-perk {
+    display:flex; align-items:flex-start; gap:.9rem;
+    background:rgba(0,200,83,.04); border:1px solid rgba(0,200,83,.1);
+    border-radius:12px; padding:.9rem 1.1rem;
   }
-  .form-submit:hover { box-shadow:0 8px 25px rgba(0,0,0,.4); transform:translateY(-2px); }
+  .sponsor-perk-icon {
+    width:34px; height:34px; border-radius:8px; flex-shrink:0;
+    background:rgba(180,140,0,.1); border:1px solid rgba(180,140,0,.2);
+    display:flex; align-items:center; justify-content:center; color:#d4aa30;
+  }
+  .sponsor-perk strong { display:block; font-size:.84rem; font-weight:700; margin-bottom:.18rem; }
+  .sponsor-perk span { color:var(--muted); font-size:.76rem; line-height:1.5; }
+  @media(max-width:768px) { .sponsor-inner { grid-template-columns:1fr; gap:2.5rem; } }
 
   /* CONFETTI */
   .confetti-piece {
@@ -1041,12 +1041,12 @@
   }
   /* Floating animation per wave position */
   @keyframes team-float-down {
-    0%,100%{ transform:translateY(38px); }
-    50%    { transform:translateY(30px); }
+    0%,100%{ transform:translateY(36px); }
+    50%    { transform:translateY(44px); }
   }
   @keyframes team-float-up {
     0%,100%{ transform:translateY(0px); }
-    50%    { transform:translateY(-8px); }
+    50%    { transform:translateY(-4px); }
   }
   /* Wave rows */
   .team-wave-row {
@@ -1054,7 +1054,7 @@
     padding:0 1.5rem; align-items:flex-start;
     margin-top:2.5rem; position:relative; z-index:2;
   }
-  .team-wave-row + .team-wave-row { margin-top:0; padding-bottom:2rem; }
+  .team-wave-row + .team-wave-row { margin-top:64px; padding-bottom:3rem; }
   /* Cards */
   .team-card {
     flex:0 0 auto; width:min(172px,calc(20% - 1.35rem));
@@ -1158,10 +1158,8 @@
     .burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
     .about-grid { grid-template-columns:1fr; }
     .stats-grid { grid-template-columns:1fr 1fr; }
-    .form-grid { grid-template-columns:1fr; }
-    .footer-grid { grid-template-columns:1fr 1fr; gap:2rem; }
-    .register-inner { padding:2rem; }
-    .tl-item { grid-template-columns:80px 1fr; gap:1rem; }
+.footer-grid { grid-template-columns:1fr 1fr; gap:2rem; }
+.tl-item { grid-template-columns:80px 1fr; gap:1rem; }
     #faq .container { grid-template-columns:1fr !important; }
     .keynote-card { flex-direction:column; text-align:center; }
     .team-card { width:min(150px,calc(33% - 1rem)); }
@@ -1210,10 +1208,10 @@
     <li><a href="#tracks">Tracks</a></li>
     <li><a href="#schedule">Schedule</a></li>
     <li><a href="#organizers">Team</a></li>
+    <li><a href="#sponsor">Sponsor</a></li>
     <li><a href="#faq">FAQ</a></li>
-    <a href="#register" class="nav-cta-mobile">Register Now</a>
   </ul>
-  <a href="#register" class="nav-cta">Register Now</a>
+  <a href="#sponsor" class="nav-cta">Partner With Us</a>
   <div class="burger" id="burger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
@@ -1346,9 +1344,9 @@
   </div>
 
   <div class="hero-btns">
-    <a href="#register" class="btn-primary">
+    <a href="YOUR_WAITLIST_FORM_LINK" target="_blank" rel="noopener" class="btn-primary">
       <i data-lucide="rocket" width="18" height="18"></i>
-      Register Now
+      Join the Waitlist
     </a>
     <a href="#about" class="btn-outline">
       <i data-lucide="play-circle" width="18" height="18"></i>
@@ -1832,41 +1830,41 @@
             <div class="team-initials">HT</div>
           </div>
           <div class="team-info">
-            <h4>Hira Tin</h4>
-            <div class="team-major">Computer Science</div>
+            <h4>Team Member</h4>
+            <div class="team-major">Major / Role</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
         </a>
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
           <div class="team-photo" style="background:linear-gradient(160deg,#071a10,#0a2e18);">
-            <div class="team-initials">AR</div>
+            <div class="team-initials">ZS</div>
           </div>
           <div class="team-info">
-            <h4>Alex Rivera</h4>
-            <div class="team-major">CS &amp; Data Science</div>
+            <h4>Zhansen Shingis</h4>
+            <div class="team-major">CS &amp; Finance</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
         </a>
 
-        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
+        <a href="https://linkedin.com/in/hiratrahi" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#04180e,#0b2e1a);">
-            <div class="team-initials">PN</div>
+            <div class="team-initials">HR</div>
           </div>
           <div class="team-info">
-            <h4>Priya Nair</h4>
-            <div class="team-major">CS &amp; Biology</div>
+            <h4>Hirat Rahman Rahi</h4>
+            <div class="team-major">CS &amp; Neuroscience</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
         </a>
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
           <div class="team-photo" style="background:linear-gradient(160deg,#061a0d,#082e16);">
-            <div class="team-initials">JK</div>
+            <div class="team-initials">YW</div>
           </div>
           <div class="team-info">
-            <h4>Jordan Kim</h4>
-            <div class="team-major">CS &amp; Mathematics</div>
+            <h4>Yohance Williams</h4>
+            <div class="team-major">Computer Science</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
         </a>
@@ -1876,8 +1874,8 @@
             <div class="team-initials">MC</div>
           </div>
           <div class="team-info">
-            <h4>Marcus Chen</h4>
-            <div class="team-major">CS &amp; Business</div>
+            <h4>Team Member</h4>
+            <div class="team-major">Major / Role</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
         </a>
@@ -1887,51 +1885,51 @@
       <!-- Row 2 -->
       <div class="team-wave-row reveal" style="transition-delay:.12s">
 
-        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#04180f,#0a2d18);">
-            <div class="team-initials">SW</div>
+            <div class="team-initials">YW</div>
           </div>
           <div class="team-info">
-            <h4>Sofia Williams</h4>
-            <div class="team-major">CS &amp; Psychology</div>
+            <h4>Team Member</h4>
+            <div class="team-major">Major / Role</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
         </a>
 
-        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
           <div class="team-photo" style="background:linear-gradient(160deg,#061a0d,#0c3319);">
-            <div class="team-initials">TM</div>
+            <div class="team-initials">RP</div>
           </div>
           <div class="team-info">
-            <h4>Team Member</h4>
-            <div class="team-major">Major / Role</div>
-            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
-          </div>
-        </a>
-
-        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
-          <div class="team-photo" style="background:linear-gradient(160deg,#051a0c,#0d3318);">
-            <div class="team-initials">TM</div>
-          </div>
-          <div class="team-info">
-            <h4>Team Member</h4>
-            <div class="team-major">Major / Role</div>
+            <h4>Rokin Prottoy</h4>
+            <div class="team-major">CS &amp; Chemistry</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
         </a>
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
-          <div class="team-photo" style="background:linear-gradient(160deg,#071a10,#0a2e18);">
-            <div class="team-initials">TM</div>
+          <div class="team-photo" style="background:linear-gradient(160deg,#051a0c,#0d3318);">
+            <div class="team-initials">EG</div>
           </div>
           <div class="team-info">
-            <h4>Team Member</h4>
-            <div class="team-major">Major / Role</div>
+            <h4>Ethan Godsey</h4>
+            <div class="team-major">Computer Science</div>
             <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
           </div>
         </a>
 
         <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="down">
+          <div class="team-photo" style="background:linear-gradient(160deg,#071a10,#0a2e18);">
+            <div class="team-initials">EK</div>
+          </div>
+          <div class="team-info">
+            <h4>Elijah Kolawolw</h4>
+            <div class="team-major">Computer Science</div>
+            <span class="team-li"><i data-lucide="linkedin" width="11" height="11"></i> LinkedIn</span>
+          </div>
+        </a>
+
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="team-card" data-wave="up">
           <div class="team-photo" style="background:linear-gradient(160deg,#04180e,#0b2e1a);">
             <div class="team-initials">TM</div>
           </div>
@@ -1992,6 +1990,46 @@
         </div>
       </a>
 
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SPONSOR ═══════════════════════════ -->
+<section id="sponsor">
+  <div class="container">
+    <div class="section-tag reveal">Partnerships</div>
+    <div class="sponsor-inner reveal">
+      <div class="sponsor-left">
+        <h2>Become a <span style="color:#d4aa30">Sponsor</span></h2>
+        <p>HackTitan brings together the sharpest student builders in the Midwest. Partner with us to connect your brand with the next generation of engineers, designers, and entrepreneurs, all in one weekend.</p>
+        <a href="YOUR_SPONSOR_FORM_LINK" target="_blank" rel="noopener" class="sponsor-btn">
+          <i data-lucide="handshake" width="17" height="17"></i>
+          Get the Sponsor Packet
+        </a>
+      </div>
+      <ul class="sponsor-perks">
+        <li class="sponsor-perk">
+          <div class="sponsor-perk-icon"><i data-lucide="users" width="16" height="16"></i></div>
+          <div>
+            <strong>Talent Pipeline</strong>
+            <span>Meet 200+ driven students actively seeking internships and full-time roles. Host a recruiting booth or sponsor a track to get direct access.</span>
+          </div>
+        </li>
+        <li class="sponsor-perk">
+          <div class="sponsor-perk-icon"><i data-lucide="lightbulb" width="16" height="16"></i></div>
+          <div>
+            <strong>Real-World Problem Solving</strong>
+            <span>Submit a sponsored challenge and watch teams build creative solutions to your actual business problems, in 24 hours.</span>
+          </div>
+        </li>
+        <li class="sponsor-perk">
+          <div class="sponsor-perk-icon"><i data-lucide="megaphone" width="16" height="16"></i></div>
+          <div>
+            <strong>Brand Visibility</strong>
+            <span>Your logo on all event materials, the website, and social media reaching thousands of students, faculty, and industry professionals.</span>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </section>
@@ -2059,62 +2097,6 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════ REGISTER ══════════════════════════ -->
-<section id="register">
-  <div class="container">
-    <div class="register-inner reveal">
-      <h2>Join the <span style="color:var(--green)">Titan</span> Army</h2>
-      <p>Secure your spot before they fill. Registration opens January 1, 2027 and closes March 15, 2027.</p>
-      <form onsubmit="handleRegister(event)">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>First Name</label>
-            <input type="text" placeholder="Ada" required />
-          </div>
-          <div class="form-group">
-            <label>Last Name</label>
-            <input type="text" placeholder="Lovelace" required />
-          </div>
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" placeholder="ada@iwu.edu" required />
-          </div>
-          <div class="form-group">
-            <label>School / University</label>
-            <input type="text" placeholder="Illinois Wesleyan" required />
-          </div>
-          <div class="form-group">
-            <label>Track Interest</label>
-            <select required>
-              <option value="" disabled selected>Choose a track…</option>
-              <option>AI &amp; Machine Learning</option>
-              <option>HealthTech</option>
-              <option>Sustainability</option>
-              <option>Open Innovation</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Team Status</label>
-            <select>
-              <option>I have a full team</option>
-              <option>Looking for teammates</option>
-              <option>Going solo</option>
-            </select>
-          </div>
-          <div class="form-group full">
-            <label>What will you build? (Optional)</label>
-            <textarea placeholder="Give us a sneak peek at your idea…"></textarea>
-          </div>
-        </div>
-        <button type="submit" class="form-submit">
-          <i data-lucide="rocket" width="18" height="18"></i>
-          Launch My Registration
-        </button>
-      </form>
-    </div>
-  </div>
-</section>
-
 <!-- ══════════════════════════════ FOOTER ════════════════════════════ -->
 <footer>
   <div class="footer-grid">
@@ -2125,10 +2107,18 @@
       </div>
       <p>Built by hackers, for hackers. Illinois Wesleyan University's flagship hackathon. 24 hours to build the future.</p>
       <div class="social-row">
-        <a href="#" class="social-btn"><i data-lucide="twitter" width="16" height="16"></i></a>
-        <a href="#" class="social-btn"><i data-lucide="github" width="16" height="16"></i></a>
-        <a href="#" class="social-btn"><i data-lucide="linkedin" width="16" height="16"></i></a>
-        <a href="#" class="social-btn"><i data-lucide="instagram" width="16" height="16"></i></a>
+        <a href="#" class="social-btn" title="LinkedIn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="#" class="social-btn" title="Instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" class="social-btn" title="X / Twitter">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="#" class="social-btn" title="Discord">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        </a>
       </div>
     </div>
     <div class="footer-col">
@@ -2140,6 +2130,7 @@
         <li><a href="#mentors">Speakers</a></li>
         <li><a href="#organizers">Organizers</a></li>
         <li><a href="#advisors">Advisors</a></li>
+        <li><a href="#sponsor">Sponsor</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -2156,7 +2147,7 @@
       <h4>Contact</h4>
       <ul>
         <li><a href="mailto:hacktitan@iwu.edu">hacktitan@iwu.edu</a></li>
-        <li><a href="#">Sponsor Us</a></li>
+        <li><a href="#sponsor">Sponsor Us</a></li>
         <li><a href="#">Volunteer</a></li>
         <li><a href="#">Mentor Sign-Up</a></li>
         <li><a href="#">Press Kit</a></li>
@@ -2164,7 +2155,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2027 HackTitan - Illinois Wesleyan University &nbsp;·&nbsp; Made with 💚 and way too much caffeine</p>
+    <p>© 2027 HackTitan - Illinois Wesleyan University &nbsp;·&nbsp; Made with 💚 and caffeine</p>
   </div>
 </footer>
 
@@ -2334,33 +2325,6 @@ function toggleMenu(){
   document.getElementById('burger').classList.toggle('open');
 }
 
-/* ── REGISTER + CONFETTI ───────────────────────────────────────────── */
-function handleRegister(e){
-  e.preventDefault();
-  // confetti burst
-  const colors=['#00C853','#69F0AE','#ffffff','#00FF6E','#A5F3C4'];
-  for(let i=0;i<80;i++){
-    const el=document.createElement('div');
-    el.className='confetti-piece';
-    el.style.cssText=`
-      left:${Math.random()*100}vw; top:${Math.random()*40+30}vh;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      width:${8+Math.random()*10}px; height:${8+Math.random()*10}px;
-      border-radius:${Math.random()>.5?'50%':'2px'};
-      --dx:${(Math.random()-0.5)*300}px;
-      --dy:${-50-Math.random()*300}px;
-      animation-delay:${Math.random()*.5}s;
-      animation-duration:${1.5+Math.random()}s;
-    `;
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),2500);
-  }
-  // toast
-  const toast=document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'),4000);
-  e.target.reset();
-}
 
 /* ── SMOOTH ANCHOR SCROLL ──────────────────────────────────────────── */
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
